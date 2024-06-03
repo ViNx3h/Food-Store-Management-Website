@@ -1,0 +1,74 @@
+
+/*header*/
+.navbar-brand img {
+    width: 90px; /* Adjust the width as needed */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Separator styles */
+.separator {
+    width: 100%;
+    height: 2px;
+    background-color: #ccc;
+    margin: 20px 0;
+}
+
+
+/*Slide anh*/
+#mainCarousel .main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 20px;
+    background: #fff390;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#mainCarousel .men_text {
+    padding-right: 20px;
+}
+
+#mainCarousel .men_text h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+#mainCarousel .main_image img {
+    max-height: 300px;
+    width: auto;
+    border-radius: 10px;
+}
+
+/*Category*/
+.category {
+    text-align: center; /* Center align the content of category */
+    margin-bottom: 20px;
+}
+
+.category img {
+    width: 300px; /* Set the width of the image */
+    height: 300px; /* Set the height of the image */
+    object-fit: cover; /* Keep aspect ratio */
+    border-radius: 10px; /* Rounded corners */
+    transition: transform 0.3s ease; /* Smooth transition */
+}
+
+.category img:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.input-group {
+    max-width: 300px;
+    margin: auto;
+}
+
+.nav-item a {
+    color: #555;
+    font-size: 1.2rem;
+    margin-left: 20px;
+}
+
+.nav-item a:hover {
+    color: #000;
+}
+

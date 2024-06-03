@@ -1,0 +1,32 @@
+/* styles.css */
+
+.navbar-brand img {
+    width: 90px; /* Adjust the width as needed */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Separator styles */
+.separator {
+    width: 100%;
+    height: 2px;
+    background-color: #ccc;
+    margin: 20px 0;
+}
+
+
+.table-custom {
+    width: 40%;
+    border-collapse: collapse;
+    margin: 0 auto; /* Đây là quy tắc căn giữa */
+}
+
+.table-custom th, .table-custom td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+.table-custom img {
+    max-height: 100px;
+    max-width: 100px;
+}
