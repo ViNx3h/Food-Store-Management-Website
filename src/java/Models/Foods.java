@@ -9,7 +9,8 @@ package Models;
  * @author ADMIN
  */
 public class Foods {
-    private String idFood;
+
+    private int idFood;
     private String name_food;
     private int price;
     private int quantity;
@@ -21,7 +22,7 @@ public class Foods {
     public Foods() {
     }
 
-    public Foods(String idFood, String name_food, int price, int quantity, String pic, String description, boolean status, int id_category) {
+    public Foods(int idFood, String name_food, int price, int quantity, String pic, String description, boolean status, int id_category) {
         this.idFood = idFood;
         this.name_food = name_food;
         this.price = price;
@@ -32,11 +33,11 @@ public class Foods {
         this.id_category = id_category;
     }
 
-    public String getIdFood() {
+    public int getIdFood() {
         return idFood;
     }
 
-    public void setIdFood(String idFood) {
+    public void setIdFood(int idFood) {
         this.idFood = idFood;
     }
 
@@ -54,14 +55,6 @@ public class Foods {
 
     public void setPrice(int price) {
         this.price = price;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
     public String getPic() {
@@ -95,5 +88,13 @@ public class Foods {
     public void setId_category(int id_category) {
         this.id_category = id_category;
     }
-    
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
 }

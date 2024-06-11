@@ -10,7 +10,8 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import DBcontext.DBContext;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -22,12 +23,6 @@ public class AdminDAO {
     PreparedStatement ps = null;
     ResultSet rs = null;
 
-    /**
-     * Dung de Hash md5 mat khau
-     *
-     * @param password la mat khau nhap vao
-     * @return mat khau da hashed
-     */
     public String hashPasswordMD5(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -47,18 +42,58 @@ public class AdminDAO {
         }
     }
 
-    public Admin checkLogin(String user, String pass) {
+    public List<Admin> checkLogin(String user, String pass) {
+
+        List<Admin> list = new ArrayList<>();
         try {
             String sql = "select * from Admin where userAdmin=? and password=?";
-            DBContext db = new DBContext();
-            conn = db.getConnection();
+            conn = DBcontext.DBConnection.connect();
             ps = conn.prepareStatement(sql);
             ps.setString(1, user);
             ps.setString(2, pass);
             rs = ps.executeQuery();
+            while (rs.next()) {
+                Admin a = new Admin();
+                a.setUserAdmin(rs.getString("userAdmin"));
+                a.setPassword(rs.getString("password"));
+                list.add(a);
+            }
+
         } catch (Exception e) {
         }
 
-        return null;
+        return list;
+    }
+
+    public Admin getProfileAdmin(String username) {
+        Admin em = new Admin();
+        try {
+            String sql = "select * from Admin where userAdmin = '" + username + "'";
+            conn = DBcontext.DBConnection.connect();
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                em.setUserAdmin(rs.getString("userAdmin"));
+                em.setPassword(rs.getString("password"));
+                em.setFullName(rs.getString("fullName"));
+                em.setBirthday(rs.getDate("birthday"));
+                em.setEmail(rs.getString("email"));
+                em.setPhone(rs.getString("phone"));
+                em.setGender(rs.getBoolean("gender"));
+                em.setAddress(rs.getString("address"));
+                em.setImg(rs.getString("img"));
+            }
+        } catch (Exception e) {
+
+        }
+        return em;
+    }
+
+    public static void main(String[] args) {
+        AdminDAO dao = new AdminDAO();
+        List<Admin> a = dao.checkLogin("toan", "e10adc3949ba59abbe56e057f20f883e");
+        if (a.isEmpty()) {
+            System.out.println("a");
+        }
     }
 }

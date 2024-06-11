@@ -3,10 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/New%20folder/Project2/web/foods.jsp</file>
-            <file>file:/D:/New%20folder/Project2/web/homepage.jsp</file>
-            <file>file:/D:/New%20folder/Project2/web/css/homepage.css</file>
-            <file>file:/D:/New%20folder/Project2/web/css/foods.css</file>
+            <file>file:/E:/Toan/FoodStoreManagement/src/java/Controllers/DeleteFood.java</file>
+            <file>file:/E:/Toan/FoodStoreManagement/src/java/Controllers/UpdateCategories.java</file>
+            <file>file:/E:/Toan/FoodStoreManagement/src/java/Controllers/Logout.java</file>
+            <file>file:/E:/Toan/FoodStoreManagement/web/ViewEditingDetail.jsp</file>
+            <file>file:/E:/Toan/FoodStoreManagement/web/DashBoardAdmin.jsp</file>
+            <file>file:/E:/Toan/FoodStoreManagement/web/index.jsp</file>
+            <file>file:/E:/Toan/FoodStoreManagement/src/java/Controllers/Login.java</file>
+            <file>file:/E:/Toan/FoodStoreManagement/src/java/DAOs/FoodsDAO.java</file>
         </group>
     </open-files>
 </project-private>
