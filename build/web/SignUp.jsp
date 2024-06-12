@@ -8,9 +8,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>RegisterCustomer</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
         <link rel="stylesheet" href="<%=request.getContextPath()%>/css/index.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
               integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
@@ -25,7 +24,7 @@
                     <div class="col-sm-12">
 
                         <h2>Register Account</h2>
-                        
+
                         <form action="CustomersController" method="post">
                             <div class="form-group">
                                 <label>UserName</label>

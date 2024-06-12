@@ -22,85 +22,87 @@
         <link rel="stylesheet" href="css/profileAdmin.css">
     </head>
     <body>
+
+
         <%
-                 Cookie[] cookies = request.getCookies();
-                 String username = null;
-                 if (cookies != null) {
-                 for (Cookie cookie : cookies) {
-                 if (cookie.getName().equals("username")) {
-                 username = cookie.getValue();
-                 break;}}}
-                 request.setAttribute("username", username);
-        %>    
-        <c:if test="${not empty username}">
-            <%
-            AdminDAO dao = new AdminDAO();
-            Admin profile = dao.getProfileAdmin(username);
-            request.setAttribute("profile", profile);
-            %>
-            <div class="container mt-5">
-                <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-header text-center">
-                                <h2>${profile.getFullName()}</h2>
+                   Cookie[] cList = null;
+                    cList = request.getCookies(); //Lay tat ca cookie cua website nay tren may nguoi dung
+                    boolean flagCustomer = false;
+                    if (cList != null) {
+                        String value = "";
+                        for (int i = 0; i < cList.length; i++) {//Duyet qua het tat ca cookie
+                            if (cList[i].getName().equals("admin")) {//nguoi dung da dang nhap
+                                value = cList[i].getValue();
+                                flagCustomer = true;
+                                break; //thoat khoi vong lap
+                            }
+                        }
+                        if (flagCustomer) {
+        AdminDAO dao = new AdminDAO();
+        Admin profile = dao.getProfileAdmin(value);
+        request.setAttribute("profile", profile);
+        %>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h2>${profile.getFullName()}</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-4">
+                                <img src="${profile.getImg()}" class="profile-img" alt="${profile.getUserAdmin()}">
                             </div>
-                            <div class="card-body">
-                                <div class="text-center mb-4">
-                                    <img src="${profile.getImg()}" class="profile-img" alt="${profile.getUserAdmin()}">
+                            <div class="mb-3 row">
+                                <label for="username" class="col-sm-3 col-form-label">Username</label>
+                                <div class="col-sm-9">
+                                    <input type="text" readonly class="form-control-plaintext" id="username" value="${profile.getUserAdmin()}">
                                 </div>
-                                <div class="mb-3 row">
-                                    <label for="username" class="col-sm-3 col-form-label">Username</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext" id="username" value="${profile.getUserAdmin()}">
-                                    </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="password" class="col-sm-3 col-form-label">Password</label>
+                                <div class="col-sm-9">
+                                    <input type="password" readonly class="form-control-plaintext" id="password" value="${profile.getPassword()}">
                                 </div>
-                                <div class="mb-3 row">
-                                    <label for="password" class="col-sm-3 col-form-label">Password</label>
-                                    <div class="col-sm-9">
-                                        <input type="password" readonly class="form-control-plaintext" id="password" value="${profile.getPassword()}">
-                                    </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="birthday" class="col-sm-3 col-form-label">Birthday</label>
+                                <div class="col-sm-9">
+                                    <input type="date" readonly class="form-control-plaintext" id="birthday" value="${profile.getBirthday()}">
                                 </div>
-                                <div class="mb-3 row">
-                                    <label for="birthday" class="col-sm-3 col-form-label">Birthday</label>
-                                    <div class="col-sm-9">
-                                        <input type="date" readonly class="form-control-plaintext" id="birthday" value="${profile.getBirthday()}">
-                                    </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="email" class="col-sm-3 col-form-label">Email</label>
+                                <div class="col-sm-9">
+                                    <input type="email" readonly class="form-control-plaintext" id="email" value="${profile.getEmail()}">
                                 </div>
-                                <div class="mb-3 row">
-                                    <label for="email" class="col-sm-3 col-form-label">Email</label>
-                                    <div class="col-sm-9">
-                                        <input type="email" readonly class="form-control-plaintext" id="email" value="${profile.getEmail()}">
-                                    </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="phone" class="col-sm-3 col-form-label">Phone</label>
+                                <div class="col-sm-9">
+                                    <input type="tel" readonly class="form-control-plaintext" id="phone" value="${profile.getPhone()}">
                                 </div>
-                                <div class="mb-3 row">
-                                    <label for="phone" class="col-sm-3 col-form-label">Phone</label>
-                                    <div class="col-sm-9">
-                                        <input type="tel" readonly class="form-control-plaintext" id="phone" value="${profile.getPhone()}">
-                                    </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="gender" class="col-sm-3 col-form-label">Gender</label>
+                                <div class="col-sm-9">
+                                    <input type="text" readonly class="form-control-plaintext" id="gender" value="${profile.isGender() ? 'Male' : 'Female'}">
                                 </div>
-                                <div class="mb-3 row">
-                                    <label for="gender" class="col-sm-3 col-form-label">Gender</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext" id="gender" value="${profile.isGender() ? 'Male' : 'Female'}">
-                                    </div>
-                                </div>
-                                <div class="mb-3 row">
-                                    <label for="address" class="col-sm-3 col-form-label">Address</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" readonly class="form-control-plaintext" id="address" value="${profile.getAddress()}">
-                                    </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="address" class="col-sm-3 col-form-label">Address</label>
+                                <div class="col-sm-9">
+                                    <input type="text" readonly class="form-control-plaintext" id="address" value="${profile.getAddress()}">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </c:if>      
-        <c:if test="${empty username}">
-            <a href="Login.jsp"><h1>Login Before</h1></a>
-        </c:if>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+        </div>
+        <%}}else{%>     
+        <a href="Login.jsp"><h1>Login Before</h1></a>
+        <%}%>    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
     </body>
 </html>

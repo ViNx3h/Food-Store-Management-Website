@@ -50,48 +50,49 @@
                         </form>
                     </li>
                     <%
-            Cookie[] cList = null;
-            cList = request.getCookies(); //Lay tat ca cookie cua website nay tren may nguoi dung
-            if (cList != null) {
-                boolean flagCustomer = false;
-                String value = "";
-                for (int i = 0; i < cList.length; i++) {//Duyet qua het tat ca cookie
-                    if (cList[i].getName().equals("customer")) {//nguoi dung da dang nhap
-                        value = cList[i].getValue();
-                        flagCustomer = true;
-                        break; //thoat khoi vong lap
-                    } 
-                }
-                if (flagCustomer) {
+                        Cookie[] cList = null;
+                        cList = request.getCookies(); //Lay tat ca cookie cua website nay tren may nguoi dung
+                        boolean flagCustomer = false;
+                        if (cList != null) {
+                            String value = "";
+                            for (int i = 0; i < cList.length; i++) {//Duyet qua het tat ca cookie
+                                if (cList[i].getName().equals("customer")) {//nguoi dung da dang nhap
+                                    value = cList[i].getValue();
+                                    flagCustomer = true;
+                                    break; //thoat khoi vong lap
+                                }
+                            }
+                            if (flagCustomer) {
                     %>
                     <li class="nav-item">
                         <%
-                                    ShoppingCartDAO scDAO = new ShoppingCartDAO();
+                            ShoppingCartDAO scDAO = new ShoppingCartDAO();
                         %>
 
                         <a class="nav-link" href="CustomersController/ShoppingCart"><i class="fas fa-shopping-cart"></i> (<%= scDAO.getQuantityOrder(value)%>)</a>
                     </li>
                     <%
-                        }} else {
-                               response.sendRedirect("/index.jsp");
-                                }
+                            }
+                        } else {
+                            response.sendRedirect("/FoodStoreManagement");
+                        }
                     %>
-                    <c:if test="${not empty sessionScope.username}">
+                    <%if (flagCustomer) {%>
 
-                        <li class="nav-item">
-                            <div class="dropdown-container">
-                                <a class="nav-link" href="#"><i class="fas fa-user" id="user-icon"></i></a>
-                                <div class="dropdown-menu" id="dropdownMenu">
-                                    <a href="#profile">Profile</a>
-                                    <a href="Logout">Logout</a>
-                                </div>
-                            </div>    
-                        </li>
-                    </c:if>
-                    <c:if test="${empty sessionScope.username}">
-                        <a href="Login.jsp">Login</a>
-                        <a href="SignUp.jsp">Sign Up</a>
-                    </c:if>
+                    <li class="nav-item">
+                        <div class="dropdown-container">
+                            <a class="nav-link" href="#"><i class="fas fa-user" id="user-icon"></i></a>
+                            <div class="dropdown-menu" id="dropdownMenu">
+                                <a href="ProfileCus.jsp">Profile</a>
+                                <a href="Logout">Logout</a>
+                            </div>
+                        </div>    
+                    </li>
+                    <%} else {
+                    %>
+                    <a href="Login.jsp">Login</a>
+                    <a href="SignUp.jsp">Sign Up</a>
+                    <%}%>
             </div>
             </ul>
         </div>
