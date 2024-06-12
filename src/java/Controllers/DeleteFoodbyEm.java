@@ -61,24 +61,31 @@ public class DeleteFoodbyEm extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
-        Cookie[] cookies = request.getCookies();
-        String username = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("username")) {
-                    username = cookie.getValue();
-                    break;
+        Cookie[] cList = null;
+        cList = request.getCookies(); //Lay tat ca cookie cua website nay tren may nguoi dung
+        boolean flagCustomer = false;
+        if (cList != null) {
+            String value = "";
+            for (int i = 0; i < cList.length; i++) {//Duyet qua het tat ca cookie
+                if (cList[i].getName().equals("employee")) {//nguoi dung da dang nhap
+                    value = cList[i].getValue();
+                    flagCustomer = true;
+                    break; //thoat khoi vong lap
                 }
             }
+            if (flagCustomer) {
+                request.setAttribute("username", value);
+                FoodsDAO dao = new FoodsDAO();
+                String idFood_raw = request.getParameter("idFood");
+                int idFood = Integer.parseInt(idFood_raw);
+                dao.deleteFood(idFood);
+                EmployeesDAO d = new EmployeesDAO();
+                d.detailDelete(value, idFood);
+                response.sendRedirect("DashBoardEmployee.jsp");
+            } else {
+                response.sendRedirect("/FoodStoreManagement");
+            }
         }
-        request.setAttribute("username", username);
-        FoodsDAO dao = new FoodsDAO();
-        String idFood_raw = request.getParameter("idFood");
-        int idFood = Integer.parseInt(idFood_raw);
-        dao.deleteFood(idFood);
-        EmployeesDAO d = new EmployeesDAO();
-        d.detailDelete(username, idFood);
-        response.sendRedirect("DashBoardEmployee.jsp");
     }
 
     /**
