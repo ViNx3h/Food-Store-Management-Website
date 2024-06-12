@@ -5,24 +5,28 @@
 package DAOs;
 
 import Models.Customers;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author ADMIN
  */
 public class CustomersDAO {
-    
+
     Connection conn = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
-    
+
     public String hashPasswordMD5(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -33,7 +37,7 @@ public class CustomersDAO {
             for (byte b : hashedBytes) {
                 sb.append(String.format("%02x", b));
             }
-            
+
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
             // Handle exception (e.g., log or throw)
@@ -41,9 +45,9 @@ public class CustomersDAO {
             return null;
         }
     }
-    
+
     public List<Customers> checkLogin(String user, String pass) {
-        
+
         List<Customers> list = new ArrayList<>();
         try {
             String sql = "select * from Customer where userCus=? and password=?";
@@ -58,13 +62,13 @@ public class CustomersDAO {
                 c.setPassword(rs.getString("password"));
                 list.add(c);
             }
-            
+
         } catch (Exception e) {
         }
-        
+
         return list;
     }
-    
+
     public List<Customers> getAllCustomers() {
         List<Customers> list = new ArrayList<>();
         try {
@@ -88,9 +92,9 @@ public class CustomersDAO {
         } catch (Exception e) {
         }
         return list;
-        
+
     }
-    
+
     public void deleteCus(String userCus) {
         String sql = "delete from Customer where userCus = ?";
 
@@ -102,7 +106,7 @@ public class CustomersDAO {
         } catch (Exception e) {
         }
     }
-    
+
     public Customers getProfileCus(String username) {
         Customers cus = new Customers();
         try {
@@ -123,15 +127,77 @@ public class CustomersDAO {
                 cus.setImg(rs.getString("img"));
             }
         } catch (Exception e) {
-            
+
+        }
+        return cus;
+    }
+
+    public Customers addNew(Customers newCustomer) throws ClassNotFoundException {
+        int count = 0;
+        try {
+            conn = DBcontext.DBConnection.connect();
+            PreparedStatement ps = conn.prepareStatement("Insert into Customer values (?,?,?,?,?,?,?,?,?)");
+            ps.setString(1, newCustomer.getUserCus());
+            ps.setString(2, newCustomer.getPassword());
+            ps.setString(3, newCustomer.getFullName());
+            ps.setDate(4, newCustomer.getBirthday());
+            ps.setString(5, newCustomer.getEmail());
+            ps.setString(6, newCustomer.getPhone());
+            ps.setBoolean(7, newCustomer.isGender());
+            ps.setString(8, newCustomer.getAddress());
+            ps.setString(9, newCustomer.getImg());
+            count = ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomersDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return (count == 0) ? null : newCustomer;
+    }
+
+    public Customers getCustomer(String username) throws ClassNotFoundException {
+        Customers cus = null;
+        try {
+            conn = DBcontext.DBConnection.connect();
+            PreparedStatement ps = conn.prepareStatement("Select * from Customer Where userCus = ?");
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                cus = new Customers(rs.getString("userCus"), rs.getString("password"), rs.getString("fullName"), rs.getDate("birthday"), rs.getString("email"), rs.getString("phone"), rs.getBoolean("gender"), rs.getString("address"), rs.getString("img"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomersDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return cus;
     }
     
+    public String getPwdMd5(String input) {
+        try {
+            
+            // Static getInstance method is called with hashing MD5
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            // digest() method is called to calculate message digest
+            // of an input digest() return array of byte
+            byte[] messageDigest = md.digest(input.getBytes());
+
+            // Convert byte array into signum representation
+            BigInteger no = new BigInteger(1, messageDigest);
+
+            // Convert message digest into hex value
+            String hashtext = no.toString(16);
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
+            }
+            return hashtext;
+        } // For specifying wrong message digest algorithms
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void main(String[] args) {
         CustomersDAO dao = new CustomersDAO();
         Customers cus = dao.getProfileCus("toan");
         System.out.println(cus);
     }
-    
+
 }

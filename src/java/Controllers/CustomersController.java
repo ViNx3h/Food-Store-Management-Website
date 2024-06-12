@@ -4,9 +4,11 @@
  */
 package Controllers;
 
+import DAOs.CustomersDAO;
 import DAOs.ShoppingCartDAO;
 import Models.Cart;
 import Models.Categories;
+import Models.Customers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -17,6 +19,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -174,6 +177,8 @@ public class CustomersController extends HttpServlet {
             } catch (Exception e) {
                 response.sendRedirect("FoodStoreManagement/CustomersController/ShoppingCart");
             }
+        } else if (path.endsWith("FoodStoreManagement/CustomersController/Register")) {
+            request.getRequestDispatcher("/Login.jsp").forward(request, response);
         }
     }
 
@@ -188,7 +193,54 @@ public class CustomersController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        if (request.getParameter("btnSubmit") != null) {
+
+            CustomersDAO cDAO = new CustomersDAO();
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            String fullname = request.getParameter("fullname");
+            String birthday = request.getParameter("birthday");
+            String email = request.getParameter("email");
+            String phone = request.getParameter("phone");
+            String gender = request.getParameter("gender");
+            String address = request.getParameter("address");
+
+            if (username.isEmpty() || password.isEmpty() || fullname.isEmpty() || birthday.isEmpty() || email.isEmpty() || phone.isEmpty() || gender == null || address.isEmpty()) {
+                request.getSession().setAttribute("errorMessage", "Please fill in all the information!");
+                response.sendRedirect("/FoodStoreManagement/Login.jsp");
+                if (gender == null) {
+                    request.getSession().setAttribute("genderMessage", "Gender must not be empty!");
+                }
+                if (birthday.equals("")) {
+                    request.getSession().setAttribute("birthdayMessage", "Birthday must not be empty!");
+                    response.sendRedirect("/FoodStoreManagement/Login.jsp");
+                }
+            } else {
+                try {
+                    Customers checkCus = cDAO.getCustomer(username);
+                    if (checkCus != null) {
+                        request.getSession().setAttribute("checkMessage", "The account is already exist!");
+                        response.sendRedirect("/FoodStoreManagement/Login.jsp");
+                    } else {
+
+                        Date date = Date.valueOf(birthday);
+                        Boolean isMale = Boolean.valueOf(gender);
+                        String pass_md5 = cDAO.getPwdMd5(password);
+                        Customers newCus = new Customers(username, pass_md5, fullname, date, email, phone, isMale, address);
+                        Customers rs = cDAO.addNew(newCus);
+                        if (rs == null) {
+                            request.getSession().setAttribute("errorMessage", "Create Fail!");
+                            response.sendRedirect("/FoodStoreManagement/Login.jsp");
+                        } else {
+                            request.getSession().setAttribute("successMessage", "Create Successfully!");
+                            response.sendRedirect("/FoodStoreManagement/Login.jsp");
+                        }
+                    }
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(CustomersController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
 
     /**

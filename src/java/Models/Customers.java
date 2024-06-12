@@ -36,6 +36,17 @@ public class Customers {
         this.address = address;
         this.img = img;
     }
+    
+    public Customers(String userCus, String password, String fullName, Date birthday, String email, String phone, boolean gender, String address) {
+        this.userCus = userCus;
+        this.password = password;
+        this.fullName = fullName;
+        this.birthday = birthday;
+        this.email = email;
+        this.phone = phone;
+        this.gender = gender;
+        this.address = address;
+    }
 
     public String getUserCus() {
         return userCus;
