@@ -132,25 +132,10 @@ public class CustomersDAO {
         return cus;
     }
 
-    public Customers addNew(Customers newCustomer) throws ClassNotFoundException {
-        int count = 0;
-        try {
-            conn = DBcontext.DBConnection.connect();
-            PreparedStatement ps = conn.prepareStatement("Insert into Customer values (?,?,?,?,?,?,?,?,?)");
-            ps.setString(1, newCustomer.getUserCus());
-            ps.setString(2, newCustomer.getPassword());
-            ps.setString(3, newCustomer.getFullName());
-            ps.setDate(4, newCustomer.getBirthday());
-            ps.setString(5, newCustomer.getEmail());
-            ps.setString(6, newCustomer.getPhone());
-            ps.setBoolean(7, newCustomer.isGender());
-            ps.setString(8, newCustomer.getAddress());
-            ps.setString(9, newCustomer.getImg());
-            count = ps.executeUpdate();
-        } catch (SQLException ex) {
-            Logger.getLogger(CustomersDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return (count == 0) ? null : newCustomer;
+    public static void main(String[] args) {
+        CustomersDAO dao = new CustomersDAO();
+        Customers cus = dao.getProfileCus("toan");
+        System.out.println(cus);
     }
 
     public Customers getCustomer(String username) throws ClassNotFoundException {
@@ -168,10 +153,10 @@ public class CustomersDAO {
         }
         return cus;
     }
-    
+
     public String getPwdMd5(String input) {
         try {
-            
+
             // Static getInstance method is called with hashing MD5
             MessageDigest md = MessageDigest.getInstance("MD5");
 
@@ -194,10 +179,25 @@ public class CustomersDAO {
         }
     }
 
-    public static void main(String[] args) {
-        CustomersDAO dao = new CustomersDAO();
-        Customers cus = dao.getProfileCus("toan");
-        System.out.println(cus);
+    public Customers addNew(Customers newCustomer) throws ClassNotFoundException {
+        int count = 0;
+        try {
+            conn = DBcontext.DBConnection.connect();
+            PreparedStatement ps = conn.prepareStatement("Insert into Customer values (?,?,?,?,?,?,?,?,?)");
+            ps.setString(1, newCustomer.getUserCus());
+            ps.setString(2, newCustomer.getPassword());
+            ps.setString(3, newCustomer.getFullName());
+            ps.setDate(4, newCustomer.getBirthday());
+            ps.setString(5, newCustomer.getEmail());
+            ps.setString(6, newCustomer.getPhone());
+            ps.setBoolean(7, newCustomer.isGender());
+            ps.setString(8, newCustomer.getAddress());
+            ps.setString(9, newCustomer.getImg());
+            count = ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomersDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return (count == 0) ? null : newCustomer;
     }
 
 }

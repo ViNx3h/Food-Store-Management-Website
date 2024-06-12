@@ -83,71 +83,77 @@ public class UpdateFoodbyEm extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
-        Cookie[] cookies = request.getCookies();
-        String username = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("username")) {
-                    username = cookie.getValue();
-                    break;
+        Cookie[] cList = null;
+        cList = request.getCookies(); //Lay tat ca cookie cua website nay tren may nguoi dung
+        boolean flagCustomer = false;
+        if (cList != null) {
+            String value = "";
+            for (int i = 0; i < cList.length; i++) {//Duyet qua het tat ca cookie
+                if (cList[i].getName().equals("employee")) {//nguoi dung da dang nhap
+                    value = cList[i].getValue();
+                    flagCustomer = true;
+                    break; //thoat khoi vong lap
                 }
             }
-        }
-        request.setAttribute("username", username);
+            if (flagCustomer) {
 
-        try {
-            String idFood_raw = request.getParameter("idFood");
-            int idFood = Integer.parseInt(idFood_raw);
-            String name_food = request.getParameter("name_food");
-            String price_raw = request.getParameter("price");
-            int price = Integer.parseInt(price_raw);
-            String quantity_raw = request.getParameter("quantity");
-            int quantity = Integer.parseInt(quantity_raw);
-            String description = request.getParameter("description");
-            String status_raw = request.getParameter("status");
-            boolean status = "available".equalsIgnoreCase(status_raw);
-            String id_category_raw = request.getParameter("id_category");
-            int id_category = Integer.parseInt(id_category_raw);
-            //check id_category
-            CategoriesDAO c = new CategoriesDAO();
-            Categories ca = c.findCategory(id_category);
-            if (ca == null) {
-                response.getWriter().println("Category is null");
+                try {
+                    String idFood_raw = request.getParameter("idFood");
+                    int idFood = Integer.parseInt(idFood_raw);
+                    String name_food = request.getParameter("name_food");
+                    String price_raw = request.getParameter("price");
+                    int price = Integer.parseInt(price_raw);
+                    String quantity_raw = request.getParameter("quantity");
+                    int quantity = Integer.parseInt(quantity_raw);
+                    String description = request.getParameter("description");
+                    String status_raw = request.getParameter("status");
+                    boolean status = "available".equalsIgnoreCase(status_raw);
+                    String id_category_raw = request.getParameter("id_category");
+                    int id_category = Integer.parseInt(id_category_raw);
+                    //check id_category
+                    CategoriesDAO c = new CategoriesDAO();
+                    Categories ca = c.findCategory(id_category);
+                    if (ca == null) {
+                        response.getWriter().println("Category is null");
+                    } else {
+                        // Handle file upload
+                        Part part = request.getPart("pic");
+                        String filename = Paths.get(part.getSubmittedFileName()).getFileName().toString();
+
+                        // Get the real path for saving the file
+                        String realPath = getServletContext().getRealPath("/images");
+                        Files.createDirectories(Paths.get(realPath)); // Ensure directory exists
+                        String filePath = Paths.get(realPath, filename).toString();
+                        part.write(filePath);
+                        String absolutePath = "images/" + filename;
+                        FoodsDAO dao = new FoodsDAO();
+                        Foods f = new Foods();
+                        f.setIdFood(idFood);
+                        f.setName_food(name_food);
+                        f.setPrice(price);
+                        f.setQuantity(quantity);
+                        f.setPic(absolutePath);
+                        f.setDescription(description);
+                        f.setStatus(status);
+                        f.setId_category(id_category);
+                        dao.updateFood(f);
+                        EmployeesDAO u = new EmployeesDAO();
+                        u.detailUpdate(value, idFood, price, absolutePath, description, id_category, quantity);
+                        response.sendRedirect("DashBoardEmployee.jsp");
+                    }
+                } catch (NumberFormatException e) {
+                    // Handle the case where numeric values cannot be parsed
+                    response.getWriter().println("Invalid numeric value provided.");
+                } catch (IOException e) {
+                    // Handle file I/O errors
+                    response.getWriter().println("Error occurred while processing file upload.");
+                } catch (Exception e) {
+                    // Handle other exceptions
+                    response.getWriter().println("An error occurred: " + e.getMessage());
+                }
             } else {
-                // Handle file upload
-                Part part = request.getPart("pic");
-                String filename = Paths.get(part.getSubmittedFileName()).getFileName().toString();
-
-                // Get the real path for saving the file
-                String realPath = getServletContext().getRealPath("/images");
-                Files.createDirectories(Paths.get(realPath)); // Ensure directory exists
-                String filePath = Paths.get(realPath, filename).toString();
-                part.write(filePath);
-                String absolutePath = "images/" + filename;
-                FoodsDAO dao = new FoodsDAO();
-                Foods f = new Foods();
-                f.setIdFood(idFood);
-                f.setName_food(name_food);
-                f.setPrice(price);
-                f.setQuantity(quantity);
-                f.setPic(absolutePath);
-                f.setDescription(description);
-                f.setStatus(status);
-                f.setId_category(id_category);
-                dao.updateFood(f);
-                EmployeesDAO u = new EmployeesDAO();
-                u.detailUpdate(username, idFood, price, absolutePath, description, id_category, quantity);
-                response.sendRedirect("DashBoardEmployee.jsp");
+                response.sendRedirect("/FoodStoreManagement");
             }
-        } catch (NumberFormatException e) {
-            // Handle the case where numeric values cannot be parsed
-            response.getWriter().println("Invalid numeric value provided.");
-        } catch (IOException e) {
-            // Handle file I/O errors
-            response.getWriter().println("Error occurred while processing file upload.");
-        } catch (Exception e) {
-            // Handle other exceptions
-            response.getWriter().println("An error occurred: " + e.getMessage());
         }
     }
 

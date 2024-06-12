@@ -177,8 +177,6 @@ public class CustomersController extends HttpServlet {
             } catch (Exception e) {
                 response.sendRedirect("FoodStoreManagement/CustomersController/ShoppingCart");
             }
-        } else if (path.endsWith("FoodStoreManagement/CustomersController/Register")) {
-            request.getRequestDispatcher("/Login.jsp").forward(request, response);
         }
     }
 
@@ -193,6 +191,7 @@ public class CustomersController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+//        processRequest(request, response);
         if (request.getParameter("btnSubmit") != null) {
 
             CustomersDAO cDAO = new CustomersDAO();

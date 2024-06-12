@@ -81,76 +81,82 @@ public class AddFoodbyEm extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 //        processRequest(request, response);
-        Cookie[] cookies = request.getCookies();
-        String username = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("username")) {
-                    username = cookie.getValue();
-                    break;
+        Cookie[] cList = null;
+        cList = request.getCookies(); //Lay tat ca cookie cua website nay tren may nguoi dung
+        boolean flagCustomer = false;
+        if (cList != null) {
+            String value = "";
+            for (int i = 0; i < cList.length; i++) {//Duyet qua het tat ca cookie
+                if (cList[i].getName().equals("employee")) {//nguoi dung da dang nhap
+                    value = cList[i].getValue();
+                    flagCustomer = true;
+                    break; //thoat khoi vong lap
                 }
             }
-        }
-        request.setAttribute("username", username);
-        try {
-            // Retrieve form parameters
-            String idFood_raw = request.getParameter("idFood");
-            int idFood = Integer.parseInt(idFood_raw);
-            String name_Food = request.getParameter("name_Food");
-            String price_raw = request.getParameter("price");
-            int price = Integer.parseInt(price_raw);
-            String description = request.getParameter("description");
-            String status_raw = request.getParameter("status");
-            boolean status = "available".equalsIgnoreCase(status_raw);
-            String id_category_raw = request.getParameter("id_category");
-            int id_category = Integer.parseInt(id_category_raw);
-            String quantity_raw = request.getParameter("quantity");
-            int quantity = Integer.parseInt(quantity_raw);
+            if (flagCustomer) {
+                try {
+                    // Retrieve form parameters
+                    String idFood_raw = request.getParameter("idFood");
+                    int idFood = Integer.parseInt(idFood_raw);
+                    String name_Food = request.getParameter("name_Food");
+                    String price_raw = request.getParameter("price");
+                    int price = Integer.parseInt(price_raw);
+                    String description = request.getParameter("description");
+                    String status_raw = request.getParameter("status");
+                    boolean status = "available".equalsIgnoreCase(status_raw);
+                    String id_category_raw = request.getParameter("id_category");
+                    int id_category = Integer.parseInt(id_category_raw);
+                    String quantity_raw = request.getParameter("quantity");
+                    int quantity = Integer.parseInt(quantity_raw);
 
-            // Handle file upload
-            Part part = request.getPart("pic");
-            String filename = Paths.get(part.getSubmittedFileName()).getFileName().toString();
+                    // Handle file upload
+                    Part part = request.getPart("pic");
+                    String filename = Paths.get(part.getSubmittedFileName()).getFileName().toString();
 
-            // Get the real path for saving the file
-            String realPath = getServletContext().getRealPath("/images");
-            Files.createDirectories(Paths.get(realPath)); // Ensure directory exists
-            String filePath = Paths.get(realPath, filename).toString();
-            part.write(filePath);
-            String absolutePath = "images/" + filename;
+                    // Get the real path for saving the file
+                    String realPath = getServletContext().getRealPath("/images");
+                    Files.createDirectories(Paths.get(realPath)); // Ensure directory exists
+                    String filePath = Paths.get(realPath, filename).toString();
+                    part.write(filePath);
+                    String absolutePath = "images/" + filename;
 
-            // Create Foods object and save to database
-            FoodsDAO dao = new FoodsDAO();
-            Foods check = dao.findFoodsById(idFood);
-            if (check == null) {
-                Foods f = new Foods();
-                f.setIdFood(idFood);
-                f.setName_food(name_Food);
-                f.setPrice(price);
-                f.setPic(absolutePath);
-                f.setDescription(description);
-                f.setStatus(status);
-                f.setId_category(id_category);
-                f.setQuantity(quantity);
-                dao.addNewFood(f);
-                EmployeesDAO a = new EmployeesDAO();
-                a.detailAdd(username, idFood, price, absolutePath, description, id_category, quantity);
-                response.sendRedirect("DashBoardEmployee.jsp");
+                    // Create Foods object and save to database
+                    FoodsDAO dao = new FoodsDAO();
+                    Foods check = dao.findFoodsById(idFood);
+                    if (check == null) {
+                        Foods f = new Foods();
+                        f.setIdFood(idFood);
+                        f.setName_food(name_Food);
+                        f.setPrice(price);
+                        f.setPic(absolutePath);
+                        f.setDescription(description);
+                        f.setStatus(status);
+                        f.setId_category(id_category);
+                        f.setQuantity(quantity);
+                        dao.addNewFood(f);
+                        EmployeesDAO a = new EmployeesDAO();
+                        a.detailAdd(value, idFood, price, absolutePath, description, id_category, quantity);
+                        response.sendRedirect("DashBoardEmployee.jsp");
+                    } else {
+                        // Handle the case where the food item already exists
+                        response.getWriter().println("Food item with the given ID already exists.");
+                    }
+
+                } catch (NumberFormatException e) {
+                    // Handle the case where numeric values cannot be parsed
+                    response.getWriter().println("Invalid numeric value provided.");
+                } catch (IOException e) {
+                    // Handle file I/O errors
+                    response.getWriter().println("Error occurred while processing file upload.");
+                } catch (Exception e) {
+                    // Handle other exceptions
+                    response.getWriter().println("An error occurred: " + e.getMessage());
+                }
+
             } else {
-                // Handle the case where the food item already exists
-                response.getWriter().println("Food item with the given ID already exists.");
+                response.sendRedirect("/FoodStoreManagement");
             }
-
-        } catch (NumberFormatException e) {
-            // Handle the case where numeric values cannot be parsed
-            response.getWriter().println("Invalid numeric value provided.");
-        } catch (IOException e) {
-            // Handle file I/O errors
-            response.getWriter().println("Error occurred while processing file upload.");
-        } catch (Exception e) {
-            // Handle other exceptions
-            response.getWriter().println("An error occurred: " + e.getMessage());
         }
-
     }
 
     /**

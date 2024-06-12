@@ -63,6 +63,7 @@
                 <a href="ViewCategories.jsp" type="button" class="btn btn-warning btn-sm me-2">View Category</a>
                 <a href="Employees.jsp" type="button" class="btn btn-warning btn-sm me-2">View Employee</a>
                 <a href="Customers.jsp" type="button" class="btn btn-warning btn-sm me-2">View Customer</a>
+                <a href="ProfileAdmin.jsp" type="button" class="btn btn-warning btn-sm me-2">Profile</a>
                 <a href="Logout">LogOut</a>
                 <div>
                     <h3>Product List</h3>

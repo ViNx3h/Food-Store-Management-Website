@@ -19,7 +19,7 @@ public class DBConnection {
         //Khai bao driver
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         //Tao doi tuong Connection
-        Connection conn = DriverManager.getConnection("jdbc:sqlserver://LAPTOP-LVCAMIG6\\LAPTOP-LVCAMIG6:1433;databaseName=Project;user=sa;password=123;encrypt=true;trustServerCertificate=true;");
+        Connection conn = DriverManager.getConnection("jdbc:sqlserver://DESKTOP-SU67MTK\\\\MSI:1433;databaseName=FoodManagement;user=sa;password=123;encrypt=true;trustServerCertificate=true;");
         return conn;
     }
 }
