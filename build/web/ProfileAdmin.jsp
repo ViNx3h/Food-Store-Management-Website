@@ -95,11 +95,14 @@
                                     <input type="text" readonly class="form-control-plaintext" id="address" value="${profile.getAddress()}">
                                 </div>
                             </div>
+                                
                         </div>
+                                <div> <a href="Employees.jsp"><button>Back</button></a></div>
                     </div>
                 </div>
             </div>
         </div>
+                                
         <%}}else{%>     
         <a href="Login.jsp"><h1>Login Before</h1></a>
         <%}%>    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>

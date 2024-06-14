@@ -20,7 +20,7 @@
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link rel="stylesheet" href="css/employees.css">
-  
+
     </head>
     <body>
         <%
@@ -40,65 +40,67 @@ request.setAttribute("username", username);
             <div class="container">
                 <h2>Manage Employees</h2>
                 <div class="container">
-                    <a class="btn btn-light" href="DashBoardAdmin.jsp"><em>Back</em></a>
-                </div>
-                <a href="AddEm.jsp"> <button>Create new Employee Account</button> </a>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Password</th>
-                            <th>Full Name</th>
-                            <th>Birthday</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Gender</th>
-                            <th>Address</th>
-                            <th>Image</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <%
-   EmployeesDAO dao = new EmployeesDAO();
-   List<Employees> list = dao.getAllEmployees();
-   request.setAttribute("list", list);
-                    %>     
-                    <c:forEach var="c" items="${requestScope.list}">
-                        <tbody>
-                        <td>${c.getUserEmployee()}</td>
-                        <td>${c.getPassword()}</td>
-                        <td>${c.getFullName()}</td>
-                        <td>${c.getBirthday()}</td>
-                        <td>${c.getEmail()}</td>
-                        <td>${c.getPhone()}</td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${c.isGender()}">
-                                    Male
-                                </c:when>
-                                <c:otherwise>
-                                    Female
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td>${c.getAddress()}</td>
-                        <td><img src="${c.getImg()}" alt="${c.getUserEmployee()}"  class="img-thumbnail img-fluid" style="max-height: 80px; max-width: 80px;""/></td>      
-                        <td>
-                            <a  href="DeleteEm?userEmployee=${c.getUserEmployee()}"
-                                onclick="return confirmDeletion();" >Delete</a>
-                        </td>
-                    </c:forEach>
-                    </tbody>
-                </table>
-                <script type="text/javascript">
-                    function confirmDeletion() {
-                        return confirm('Are you sure you want to delete this Employee?');
-                    }
-                </script>
-            </c:if>      
-            <c:if test="${empty username}">
-                <a href="Login.jsp"><h1>Login Before</h1></a>
-            </c:if>
+
+
+                    <a href="AddEm.jsp"> <button>Create new Employee Account</button> </a>
+                    <table class="table mt-3">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Password</th>
+                                <th>Full Name</th>
+                                <th>Birthday</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Gender</th>
+                                <th>Address</th>
+                                <th>Image</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <%
+       EmployeesDAO dao = new EmployeesDAO();
+       List<Employees> list = dao.getAllEmployees();
+       request.setAttribute("list", list);
+                        %>     
+                        <c:forEach var="c" items="${requestScope.list}">
+                            <tbody>
+                            <td>${c.getUserEmployee()}</td>
+                            <td>${c.getPassword()}</td>
+                            <td>${c.getFullName()}</td>
+                            <td>${c.getBirthday()}</td>
+                            <td>${c.getEmail()}</td>
+                            <td>${c.getPhone()}</td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${c.isGender()}">
+                                        Male
+                                    </c:when>
+                                    <c:otherwise>
+                                        Female
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>${c.getAddress()}</td>
+                            <td><img src="${c.getImg()}" alt="${c.getUserEmployee()}"  class="img-thumbnail img-fluid" style="max-height: 80px; max-width: 80px;""/></td>      
+                            <td>
+                                <a  href="DeleteEm?userEmployee=${c.getUserEmployee()}"
+                                    onclick="return confirmDeletion();" >Delete</a>
+                            </td>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                    <script type="text/javascript">
+                        function confirmDeletion() {
+                            return confirm('Are you sure you want to delete this Employee?');
+                        }
+                    </script>
+                </c:if>    
+                <a class="btn btn-light" href="DashBoardAdmin.jsp"><em>Back</em></a>
+                <c:if test="${empty username}">
+
+                </c:if>
+            </div>
             <!-- Bootstrap Bundle with Popper -->
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js"></script>

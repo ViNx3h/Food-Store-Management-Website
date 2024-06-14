@@ -48,6 +48,8 @@
 
                 <a href="AddFoodbyEm.jsp" type="button" class="btn btn-warning btn-sm me-2">Add new Food</a>
                 <a href="ProfileEm.jsp" type="button" class="btn btn-warning btn-sm me-2">Profile</a>
+                
+
                 <div>
                     <h3>Product List</h3>
                     <table class="table">

@@ -90,8 +90,15 @@
                     </li>
                     <%} else {
                     %>
-                    <a href="Login.jsp">Login</a>
-                    <a href="SignUp.jsp">Sign Up</a>
+                    <li class="nav-item">
+                        <div class="dropdown-container">
+                            <a class="nav-link" href="#"><i class="fas fa-user" id="user-icon"></i></a>
+                            <div class="dropdown-menu" id="dropdownMenu">
+                                <a href="Login.jsp">Login</a>
+                                <a href="SignUp.jsp">Sign Up</a>
+                            </div>
+                        </div>    
+                    </li>
                     <%}%>
             </div>
             </ul>
@@ -161,7 +168,7 @@
     </div>
 </div>
 <main>
-    <div class="container mt-5">
+    <div class="container mt-1">
         <hr>
         <%
             FoodsDAO pDAO = new FoodsDAO();
@@ -176,7 +183,7 @@
             %>
             <div class="col-sm-6 col-md-3">
                 <div class="card p-1">
-                    <img class="card-img-top" src="<%= request.getContextPath()%>/imgs/<%= rs2.getString("pic")%>" alt="Card image">
+                    <img class="card-img-top" src="<%= rs2.getString("pic")%>" alt="Card image">
                     <div class="card-body text-center">
                         <h4 class="card-title"><%= rs2.getString("name_food")%></h4>
                         <div class="card-text">

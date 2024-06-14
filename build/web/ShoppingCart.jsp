@@ -28,7 +28,7 @@
               integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <!-- Add css -->
-        <link rel="stylesheet" href="<%= request.getContextPath()%>/css/home_product.css">
+        <link rel="stylesheet" href="<%= request.getContextPath()%>/css/homepage.css">
     </head>
     <body>
         <%
@@ -50,7 +50,7 @@
             <!-- Menu -->
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
-                    <a href="/FoodStoreManagement" class="navbar-brand"><img id="logo" src="<%= request.getContextPath()%>/imgs/Logo.jpg" alt="Hame Logo"></a>
+                    <a href="/FoodStoreManagement" class="navbar-brand"><img id="logo" src="<%= request.getContextPath()%>/image/logo.jpg" alt="Hame Logo"></a>
                     <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -90,7 +90,7 @@
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="/AnimeStore/MyAccount">My Account</a></li>
                                     <li><a class="dropdown-item" href="/AnimeStore/ViewOrder">View Order History</a></li>
-                                    <li><a class="dropdown-item" href="/AnimeStore/SignOutCustomer">Sign out</a></li>
+                                    <li><a class="dropdown-item" href="Logout">Sign out</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -104,14 +104,15 @@
             <%
                 int count = 0;
                 FoodsDAO pDAO = new FoodsDAO();
+                
                 ResultSet rs2 = scDAO.getAll(value);
-                while (rs2.next()) {
+                while ( rs2.next() ) {
                     ++count;
                     Foods pro = pDAO.getProduct(rs2.getInt("idFood"));
             %>
             <div class="container d-flex border border-1 mb-5" style="padding: 0">
                 <div class="col-sm-5 col-md-2 d-flex align-content-center p-3">
-                    <img src="<%= request.getContextPath()%>/imgs/<%= pro.getPic()%>" style="height: 100px;" alt="<%= pro.getName_food()%>">
+                    <img src="<%= pro.getPic()%>" style="height: 100px;" alt="<%= pro.getName_food()%>">
                 </div>
                 <div class="col-sm-7 col-md-10 pt-1">
                     <h4 class=""> <%= pro.getName_food()%></h4>

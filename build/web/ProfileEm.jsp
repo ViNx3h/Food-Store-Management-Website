@@ -59,8 +59,10 @@
                             </div>
                             <div class="mb-3 row">
                                 <label for="password" class="col-sm-3 col-form-label">Password</label>
+
                                 <div class="col-sm-9">
                                     <input type="password" readonly class="form-control-plaintext" id="password" value="${profile.getPassword()}">
+                                    <a href="ChangePassEm?name=${profile.getUserEmployee()}" > <button>Change Password </button></a> 
                                 </div>
                             </div>
                             <div class="mb-3 row">
@@ -96,7 +98,9 @@
                         </div>
                     </div>
                 </div>
+                <a class="btn btn-light" href="DashBoardEmployees.jsp"><em>Back</em></a>
             </div>
+
         </div>
         <%}}else{%>   
         <a href="Login.jsp"><h1>Login Before</h1></a>

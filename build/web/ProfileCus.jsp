@@ -100,6 +100,7 @@
                     </div>
                 </div>
             </div>
+                               
         </div>
         <%}} else {%>
         <a href="Login.jsp"><h1>Login Before</h1></a>
