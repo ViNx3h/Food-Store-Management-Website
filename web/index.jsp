@@ -163,13 +163,14 @@
 <main>
     <div class="container mt-5">
         <hr>
-        <%
+        <%  
+            CategoriesDAO cDAO = new CategoriesDAO();
             FoodsDAO pDAO = new FoodsDAO();
-            ResultSet rs = pDAO.getAll();
+            ResultSet rs = cDAO.getAll();
             while (rs.next()) {
-                ResultSet rs2 = pDAO.getTop4(rs.getInt("idFood"));
+                ResultSet rs2 = pDAO.getTop4(rs.getInt("id_category"));
         %>
-        <a href="/FoodStoreManagement/Foods.jsp?id=<%=rs.getInt("idFood")%>"> <h1 class="text-center"><%= rs.getString("name_food")%></h1></a>
+        <a href="/FoodStoreManagement/Foods.jsp?id=<%=rs.getInt("id_category")%>"> <h1 class="text-center"><%= rs.getString("name_category")%></h1></a>
         <div class="row" id="card-wool">
             <%
                 while (rs2.next()) {
@@ -194,7 +195,7 @@
             %>
         </div>
         <div class="text-center m-5">
-            <a href="CustomersController/Food/<%= rs.getInt("idFood")%>" class="btn" id="look-all">All items</a>
+            <a href="CustomersController/Food/<%= rs.getInt("id_category")%>" class="btn" id="look-all">All items</a>
         </div>
         <hr>
         <%

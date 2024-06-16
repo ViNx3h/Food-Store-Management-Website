@@ -1,15 +1,11 @@
 <%-- 
-    Document   : Foods
-    Created on : Jun 4, 2024, 10:25:47 PM
+    Document   : foods
+    Created on : Jun 3, 2024, 5:15:32 PM
     Author     : ADMIN
 --%>
 
-<%@page import="java.sql.ResultSet"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page import="Models.Foods"%>
-<%@page import="DAOs.FoodsDAO"%>
-<%@page import="java.util.List"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -23,25 +19,9 @@
         <title>JSP Page</title>
     </head>
     <body>
-
-        <%
-            Cookie[] cList = null;
-            cList = request.getCookies(); //Lay tat ca cookie cua website nay tren may nguoi dung
-            if (cList != null) {
-                boolean flagCustomer = false;
-                String value = "";
-                for (int i = 0; i < cList.length; i++) {//Duyet qua het tat ca cookie
-                    if (cList[i].getName().equals("customer")) {//nguoi dung da dang nhap
-                        value = cList[i].getValue();
-                        flagCustomer = true;
-                        break; //thoat khoi vong lap
-                    }
-                }
-                if (flagCustomer) {
-        %>
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
             <div class="container">
-                <a class="navbar-brand" href="/FoodStoreManagement"><img src="image/logo.png" alt="Logo"></a>
+                <a class="navbar-brand" href="ListCategory"><img src="image/logo.png" alt="Logo"></a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -74,51 +54,30 @@
 
         <!-- Separator -->
         <div class="separator"></div>
-        <%
-            String id = request.getParameter("id");
-            FoodsDAO dao = new FoodsDAO();
-            List<Foods> list = dao.getAllFoodsbyCategory(id);
-            request.setAttribute("list", list);
-        %>
-
+        
+        
         <table class="container table table-bordered" style="width: 40%">
             <thead class="thead-dark">
                 <tr>
                     <th>Name of Food</th>
                     <th>Price</th>
+                    <th>Quantity</th>
                     <th>Picture</th>
-                    <th>Description</th>        
-                    <th>Quantity</th>     
+                    <th>Description</th>     
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                <%
-                    }}
-                %>
                 <c:forEach var="c" items="${requestScope.list}">
                     <tr>
                         <td>${c.name_food}</td>
                         <td>${c.price}</td>
+                        <td>${c.quantity}</td>
                         <td><img src="${c.pic}" alt="${c.name_food}" class="img-thumbnail img-fluid" style="max-height: 100px; max-width: 100px;"/></td>
                         <td>${c.description}</td>
-                        <td>${c.quantity}</td>
-                        <%
-                            FoodsDAO pDAO = new FoodsDAO();
-                            ResultSet rs = pDAO.getAll();
-                            while (rs.next()) {
-
-                        %>
-                        <td><a class="btn btn-primary btn-sm" href="CustomersController/AddCart/<%= rs.getInt("idFood")%>">Add to Cart</a></td>
+                        <td><a class="btn btn-primary btn-sm" href="#">Add to Cart</a></td>
                     </tr>
-                    <%
-                                    }
-                                
-
-                        
-                    %>
                 </c:forEach>
-
             </tbody>
         </table>
 
