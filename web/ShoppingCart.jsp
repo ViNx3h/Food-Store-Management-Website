@@ -169,9 +169,18 @@
             <%
                 if (count > 0) {
             %>
-            <div class="text-center">
-                <a class="btn btn-dark text-light mb-5" href="/AnimeStore/ViewOrder_Process">Check out</a>
-            </div>
+            <form action="" method="post">
+                <div>
+                    Note: <input type="text" placeholder="What's your note ?" name="noteTXT">
+                    Address: <input type="text" placeholder="What's your address ?" name="addressTXT">
+                    Phone: <input type="text" placeholder="What's your phone ?" name="phoneTXT">
+                </div>
+                <div class="text-center">
+
+                    <a class="btn btn-dark text-light mb-5" href="/FoodStoreManagement/CustomersController/ViewOrder_Process">Check out</a>
+<!--                    <button type="submit" href="/FoodStoreManagement/CustomersController/ViewOrder_Process" class="btn btn-primary">Check out</button>-->
+                </div>
+            </form>
             <%
             } else {
             %>
