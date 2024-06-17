@@ -49,7 +49,7 @@
             <!-- Menu -->
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
-                    <a href="/AnimeStore/Home" class="navbar-brand"><img id="logo" src="<%= request.getContextPath()%>/imgs/Logo.jpg" alt="Hame Logo"></a>
+                    <a href="/FoodStoreManagement" class="navbar-brand"><img id="logo" src="<%= request.getContextPath()%>/imgs/Logo.jpg" alt="Hame Logo"></a>
                     <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -57,7 +57,7 @@
                         <ul class="navbar-nav">
 
                             <li class="nav-item">
-                                <a class="nav-link" href="/AnimeStore/Home">Home</a>
+                                <a class="nav-link" href="/FoodStoreManagement">Home</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Product</a>
@@ -77,7 +77,7 @@
                                 <%
                                     ShoppingCartDAO scDAO = new ShoppingCartDAO();
                                 %>
-                                <a class="nav-link" href="CustomersController/ShoppingCart">Shopping Cart (<%= scDAO.getQuantityOrder(value)%>)</a>
+                                <a class="nav-link" href="/FoodStoreManagement/CustomersController/ShoppingCart">Shopping Cart (<%= scDAO.getQuantityOrder(value)%>)</a>
                             </li>
                         </ul>
                         <ul class="navbar-nav">
@@ -88,9 +88,9 @@
                                 %>
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Welcome, <%= cus.getFullName()%></a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/AnimeStore/MyAccount">My Account</a></li>
-                                    <li><a class="dropdown-item" href="/AnimeStore/ViewOrder">View Order History</a></li>
-                                    <li><a class="dropdown-item" href="Logout">Sign out</a></li>
+                                    <li><a class="dropdown-item" href="#">My Account</a></li>
+                                    <li><a class="dropdown-item" href="/FoodStoreManagement/CustomersController/ViewOrder">View Order History</a></li>
+                                    <li><a class="dropdown-item" href="/FoodStoreManagement/Logout">Sign out</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -110,14 +110,14 @@
             %>
             <div class="container border border-3 border-success p-2 mb-5" style="">
                 <div class="d-flex justify-content-between">
-                    <p><strong>Bill: <%= rsBill.getInt("id")%></strong></p>
-                    <p style="margin-bottom: 0"><em><%= rsBill.getDate("date")%></em></p>
+                    <p><strong>Bill: <%= rsBill.getInt("idOrder")%></strong></p>
+                    <p style="margin-bottom: 0"><em><%= rsBill.getDate("orderDate")%></em></p>
                 </div><hr style=""/>
 
                 <%
-                    ResultSet rsOrder = oDAO.getOrder(rsBill.getInt("id"));
+                    ResultSet rsOrder = oDAO.getOrder(rsBill.getInt("idOrder"));
                     while (rsOrder.next()) {
-                        Foods pro = pDAO.getProduct(rsOrder.getInt("pro_id"));
+                        Foods pro = pDAO.getProduct(rsOrder.getInt("idFood"));
                 %>
                 <div class="row p-2">
                     <div class="col-sm-2 col-lg-3">
@@ -132,7 +132,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="note" class="form-label">Note:</label>
+                        <label for="note" class="form-label">Note: <%= bDAO.getNote(value)%></label>
+                        <label for="note" class="form-label">Address: <%= bDAO.getAddress(value)%></label>
+                        <label for="note" class="form-label">Phone: <%= bDAO.getPhone(value)%></label>
                         <textarea class="form-control" id="note" rows="3"></textarea>
                     </div>
 
@@ -141,7 +143,7 @@
                     }
                 %>
 
-                <p class="d-flex justify-content-end" style="color: #dc3545; font-size: x-large"><strong>Total: <%= rsBill.getLong("total")%>$</strong></p>
+                <p class="d-flex justify-content-end" style="color: #dc3545; font-size: x-large"><strong>Total: <%= rsBill.getInt("total_quantity")%>$</strong></p>
             </div>
             <%
                 }
