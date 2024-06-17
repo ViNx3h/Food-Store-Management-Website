@@ -177,8 +177,8 @@
                 </div>
                 <div class="text-center">
 
-                    <a class="btn btn-dark text-light mb-5" href="/FoodStoreManagement/CustomersController/ViewOrder_Process">Check out</a>
-<!--                    <button type="submit" href="/FoodStoreManagement/CustomersController/ViewOrder_Process" class="btn btn-primary">Check out</button>-->
+<!--                    <a class="btn btn-dark text-light mb-5" href="/FoodStoreManagement/CustomersController/ViewOrder_Process">Check out</a>-->
+<button type="submit" href="/FoodStoreManagement/CustomersController/ViewOrder_Process" class="btn btn-primary" name="btnCheckOut">Check out</button>
                 </div>
             </form>
             <%
