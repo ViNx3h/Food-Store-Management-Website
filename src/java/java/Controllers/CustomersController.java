@@ -293,6 +293,51 @@ public class CustomersController extends HttpServlet {
                     Logger.getLogger(CustomersController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+        } else if (request.getParameter("btnCheckOut") != null) {
+            String note = request.getParameter("noteTXT");
+            String address = request.getParameter("addressTXT");
+            String phone = request.getParameter("phoneTXT");
+            try {
+                Cookie[] cList;
+                cList = request.getCookies();
+                String value = null;
+                for (Cookie cList1 : cList) { //Duyet qua het tat ca cookie
+                    if (cList1.getName().equals("customer")) { //nguoi dung da dang nhap
+                        value = cList1.getValue();
+                        break; //thoat khoi vong lap
+                    }
+                }
+                ShoppingCartDAO scDAO = new ShoppingCartDAO();
+                BillsDAO bDAO = new BillsDAO();
+
+                long millis = System.currentTimeMillis();
+                // creating a new object of the class Date  
+                Date date = new Date(millis);
+                int total_quantity = scDAO.getQuantityOrder(value);
+                Bills billNew = new Bills(value, date, total_quantity, note, address, phone);
+                Bills bill = bDAO.addNew(billNew);
+                if (bill == null) {
+                    response.sendRedirect("/FoodStoreManagement/CustomersController/ShoppingCart");
+                } else {
+                    int bill_id = bDAO.getID();
+                    FoodsDAO pDAO = new FoodsDAO();
+                    OrdersDAO oDAO = new OrdersDAO();
+                    ResultSet rs = scDAO.getAll(value);
+                    while (rs.next()) {
+                        Foods pro = pDAO.getProduct(rs.getInt("idFood"));
+                        Orders orderNew = new Orders(bill_id, rs.getInt("idFood"), rs.getInt("quantity"), rs.getInt("price"));
+                        Orders order = oDAO.addNew(orderNew);
+                        if (order == null) {
+                            response.sendRedirect("/FoodStoreManagement/CustomersController/ShoppingCart");
+                        } else {
+                            pDAO.updateQuantity(rs.getInt("idFood"), pro.getQuantity() - rs.getInt("quantity"));
+                        }
+                    }
+                    scDAO.delete(value);
+                    response.sendRedirect("/FoodStoreManagement/CustomersController/ViewOrder");
+                }
+            } catch (Exception e) {
+            }
         }
     }
 

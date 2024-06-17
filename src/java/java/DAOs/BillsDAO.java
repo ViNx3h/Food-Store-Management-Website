@@ -29,7 +29,7 @@ public class BillsDAO {
             Logger.getLogger(BillsDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public Bills addNew(Bills newBill) {
         int count = 0;
         try {
@@ -45,7 +45,7 @@ public class BillsDAO {
         }
         return (count == 0) ? null : newBill;
     }
-    
+
     public int getID() {
         int id = 0;
         try {
@@ -59,7 +59,7 @@ public class BillsDAO {
         }
         return id;
     }
-    
+
     public ResultSet getBill(String cus_us) {
         ResultSet rs = null;
         try {
@@ -71,7 +71,7 @@ public class BillsDAO {
         }
         return rs;
     }
-    
+
     public ResultSet getBill_byDate(Date date) {
         ResultSet rs = null;
         try {
@@ -83,7 +83,7 @@ public class BillsDAO {
         }
         return rs;
     }
-    
+
     public long total_income_a_date(Date date) {
         long total_income = 0;
         ResultSet rs;
@@ -99,7 +99,7 @@ public class BillsDAO {
         }
         return total_income;
     }
-    
+
     public ResultSet getBill_byMonth(Date date) {
         ResultSet rs = null;
         try {
@@ -110,7 +110,7 @@ public class BillsDAO {
         }
         return rs;
     }
-    
+
     public long total_income_a_month(Date date) {
         long total_income = 0;
         try {
@@ -124,7 +124,7 @@ public class BillsDAO {
         }
         return total_income;
     }
-    
+
     public ResultSet getBill_byYear(int year) {
         ResultSet rs = null;
         try {
@@ -135,7 +135,7 @@ public class BillsDAO {
         }
         return rs;
     }
-    
+
     public long total_income_a_year(int year) {
         long total_income = 0;
         try {
@@ -148,5 +148,50 @@ public class BillsDAO {
             Logger.getLogger(BillsDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return total_income;
+    }
+
+    public String getNote(String value) {
+        String note = "";
+        try {
+            PreparedStatement ps = conn.prepareStatement("SELECT note FROM [Order] WHERE userCus = ?");
+            ps.setString(1, value);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+                note = rs.getString("note");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BillsDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return note;
+    }
+    
+    public String getAddress(String value) {
+        String address = "";
+        try {
+            PreparedStatement ps = conn.prepareStatement("SELECT address FROM [Order] WHERE userCus = ?");
+            ps.setString(1, value);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+                address = rs.getString("address");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BillsDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return address;
+    }
+    
+    public String getPhone(String value) {
+        String phone = "";
+        try {
+            PreparedStatement ps = conn.prepareStatement("SELECT phone FROM [Order] WHERE userCus = ?");
+            ps.setString(1, value);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+                phone = rs.getString("phone");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BillsDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return phone;
     }
 }
