@@ -89,8 +89,8 @@
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" id="logBox">Welcome, </a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="/AnimeStore/MyAccount">My Account</a></li>
-                                    <li><a class="dropdown-item" href="/AnimeStore/ViewOrder">View Order History</a></li>
-                                    <li><a class="dropdown-item" href="/AnimeStore/SignOutCustomer">Sign out</a></li>
+                                    <li><a class="dropdown-item" href="/FoodStoreManagement/CustomersController/ViewOrder">View Order History</a></li>
+                                    <li><a class="dropdown-item" href="/FoodStoreManagement/Logout">Sign out</a></li>
                                 </ul>
                             </li>
                         </ul>
