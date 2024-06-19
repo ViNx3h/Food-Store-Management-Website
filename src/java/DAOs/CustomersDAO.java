@@ -231,4 +231,19 @@ public class CustomersDAO {
         }
     }
 
+    public String getUserCus(String username) throws ClassNotFoundException {
+        String email = null;
+        try {
+            conn = DBcontext.DBConnection.connect();
+            PreparedStatement ps = conn.prepareStatement("Select * from Customer Where userCus = ?");
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                email = rs.getString("userCus");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomersDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return email;
+    }
 }
