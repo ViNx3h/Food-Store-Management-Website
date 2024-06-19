@@ -22,17 +22,19 @@
     </head>
     <body>
         <%
-Cookie[] cookies = request.getCookies();
-String username = null;
-if (cookies != null) {
-for (Cookie cookie : cookies) {
-if (cookie.getName().equals("username")) {
- username = cookie.getValue();
- break;
-}
-}
-}
-request.setAttribute("username", username);
+            Cookie[] cList = null;
+            cList = request.getCookies(); //Lay tat ca cookie cua website nay tren may nguoi dung
+            boolean flagAdmin = false;
+            if (cList != null) {
+                String value = "";
+                for (int i = 0; i < cList.length; i++) {//Duyet qua het tat ca cookie
+                    if (cList[i].getName().equals("admin")) {//nguoi dung da dang nhap
+                        value = cList[i].getValue();
+                        flagAdmin = true;
+                        break; //thoat khoi vong lap
+                    }
+                }
+                if (flagAdmin) {
         %>
         <c:if test="${not empty username}">
             <div class="container">
@@ -56,9 +58,9 @@ request.setAttribute("username", username);
                         </tr>
                     </thead>
                     <%
-                    CustomersDAO dao = new CustomersDAO();
-                    List<Customers> list = dao.getAllCustomers();
-                    request.setAttribute("list", list);
+                        CustomersDAO dao = new CustomersDAO();
+                        List<Customers> list = dao.getAllCustomers();
+                        request.setAttribute("list", list);
                     %>
                     <c:forEach var="c" items="${requestScope.list}">
                         <tbody>
@@ -82,7 +84,7 @@ request.setAttribute("username", username);
                         <td><img src="${c.getImg()}" alt="${c.getUserCus()}"  class="img-thumbnail img-fluid" style="max-height: 80px; max-width: 80px;""/></td>      
                         <td>
                             <a  href="DeleteCus?userCus=${c.getUserCus()}"
-                                onclick="return confirmDeletion();" >Delete</a>
+                                onclick="return confirmDeletion();" >Delete</a> | <a href="/FoodStoreManagement/AdminController/ViewCustomerOrderHistory/${c.getUserCus()}"> View Order History </a>
                         </td>
                     </c:forEach>
                     </tbody>
@@ -96,6 +98,19 @@ request.setAttribute("username", username);
             <c:if test="${empty username}">
                 <a href="Login.jsp"><h1>Login Before</h1></a>
             </c:if>
+            <%
+                }
+            %>
+
+            <%
+            } else {
+            %>
+            <a href="Login.jsp">
+                You need to login first
+            </a>
+            <%
+                }
+            %>
             <!-- Bootstrap Bundle with Popper -->
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js"></script>
