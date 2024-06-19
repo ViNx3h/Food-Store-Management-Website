@@ -4,21 +4,19 @@
  */
 package Controllers;
 
-import DAOs.AdminDAO;
-import Models.Admin;
+import DAOs.CustomersDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
- * @author ADMIN
+ * @author VINH
  */
-@WebServlet(name = "AdminController", urlPatterns = {"/AdminController"})
 public class AdminController extends HttpServlet {
 
     /**
@@ -59,7 +57,28 @@ public class AdminController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String path = request.getRequestURI();
+        if (path.endsWith("/FoodStoreManagement/AdminController/Dashboard")) {
+            request.getRequestDispatcher("/DashboardAdmin.jsp").forward(request, response);
+        } else if (path.endsWith("/FoodStoreManagement/AdminController/ListCustomer")) {
+            request.getRequestDispatcher("/Customers.jsp").forward(request, response);
+        } else if (path.startsWith("/FoodStoreManagement/AdminController/ViewCustomerOrderHistory")) {
+            String[] s = path.split("/");
+            try {
+                String userCus = s[s.length - 1];
+                CustomersDAO cDAO = new CustomersDAO();
+                String user = cDAO.getUserCus(userCus);
+                if (user == null) {
+                    response.sendRedirect("/Customers.jsp");
+                } else {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("user", user);
+                    request.getRequestDispatcher("/ViewOrderHistory.jsp").forward(request, response);
+                }
+            } catch (Exception e) {
+                response.sendRedirect("/FoodStoreManagement/AdminController/Dashboard");
+            }
+        }
     }
 
     /**
@@ -73,15 +92,7 @@ public class AdminController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String u = request.getParameter("username");
-        AdminDAO ad = new AdminDAO();
-        String p_raw = request.getParameter("password");
-        String p = ad.hashPasswordMD5(p_raw);
-        Admin account = ad.checkLogin(u, p);
-        if (account == null) {
-            response.sendRedirect("ListCategory");
-        } else {
-        }
+        processRequest(request, response);
     }
 
     /**
