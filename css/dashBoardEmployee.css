@@ -1,0 +1,13 @@
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.search-container {
+    max-width: 500px;
+    margin: auto;
+}
+
+.search-container h4 {
+    margin-bottom: 15px;
+}
