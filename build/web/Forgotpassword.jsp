@@ -1,7 +1,7 @@
 <%-- 
     Document   : Forgotpassword
-    Created on : Jun 17, 2024, 10:31:07 PM
-    Author     : VINH
+    Created on : Jun 19, 2024, 1:14:02 PM
+    Author     : ADMIN
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -87,11 +87,21 @@
                                     class="form-text text-muted">Enter the registered email address . Then we'll
                                     email a OTP to this address.</small>
                             </div>
+
+                            <%
+                            String error = (String) request.getAttribute("error");
+                            if (error != null) {
+                            %>
+                            <div class="text-danger">
+                                <%= error %>
+                            </div>
+                            <%}%>
+
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary" name="btnGetOTP">Get OTP</button>
-                            <button class="btn btn-danger" type="submit">Back to
-                                Login</button>
+                            <a href="/FoodStoreManagement/Login.jsp" class="btn btn-danger">Back to
+                                Login</a>
                         </div>
                     </form>
                 </div>
