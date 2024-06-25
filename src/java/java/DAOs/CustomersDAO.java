@@ -200,4 +200,82 @@ public class CustomersDAO {
         return (count == 0) ? null : newCustomer;
     }
 
+    public String getEmail(String username) throws ClassNotFoundException {
+        String email = null;
+        try {
+            conn = DBcontext.DBConnection.connect();
+            PreparedStatement ps = conn.prepareStatement("Select email from Customer Where userCus = ?");
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                email = rs.getString("email");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomersDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return email;
+    }
+
+    public void ChangePassCustomer(String newPass, String username) {
+        String sql = "update Customer set password=? where userCus=?";
+        try {
+            conn = DBcontext.DBConnection.connect();
+            ps = conn.prepareStatement(sql);
+
+            ps.setString(1, newPass);
+            ps.setString(2, username);
+
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+        }
+    }
+
+    public String getUserCus(String username) throws ClassNotFoundException {
+        String email = null;
+        try {
+            conn = DBcontext.DBConnection.connect();
+            PreparedStatement ps = conn.prepareStatement("Select userCus from Customer Where userCus = ?");
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                email = rs.getString("userCus");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomersDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return email;
+    }
+
+    public String getfullName(String username) throws ClassNotFoundException {
+        String email = null;
+        try {
+            conn = DBcontext.DBConnection.connect();
+            PreparedStatement ps = conn.prepareStatement("Select * from Customer Where userCus = ?");
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                email = rs.getString("fullName");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomersDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return email;
+    }
+
+    public boolean checkCus(String username) throws ClassNotFoundException {
+        try {
+            conn = DBcontext.DBConnection.connect();
+            PreparedStatement ps = conn.prepareStatement("Select * from Customer Where userCus = ?");
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomersDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
 }
