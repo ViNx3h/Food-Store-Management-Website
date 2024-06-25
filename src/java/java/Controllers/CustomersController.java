@@ -15,7 +15,6 @@ import Models.Categories;
 import Models.Customers;
 import Models.Foods;
 import Models.Orders;
-import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -26,7 +25,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.util.Properties;
@@ -361,53 +359,60 @@ public class CustomersController extends HttpServlet {
                 String email = request.getParameter("email");
                 CustomersDAO cDAO = new CustomersDAO();
                 String userMail = cDAO.getEmail(username);
-                if (!(userMail.equalsIgnoreCase(email))) {
-                    request.getSession().setAttribute("checkEmail", "The email in the account doesn't match input email or the account doesn't exist");
-                    response.sendRedirect("/FoodStoreManagement/CustomersController/ForgotPassword");
-                } else {
-                    int otpvalue = 0;
-                    HttpSession mySession = request.getSession();
-                    if (email != null || !email.equals("")) {
-                        // sending otp
-                        Random rand = new Random();
-                        otpvalue = rand.nextInt(1255650);
+                boolean checkCus = cDAO.checkCus(username);
+                if (checkCus) {
+                    if (!(userMail.equalsIgnoreCase(email))) {
+                        request.getSession().setAttribute("checkEmail", "The email in the account doesn't match input email or the account doesn't exist");
+                        response.sendRedirect("/FoodStoreManagement/CustomersController/ForgotPassword");
+                    } else {
+                        int otpvalue = 0;
+                        HttpSession mySession = request.getSession();
+                        if (email != null || !email.equals("")) {
+                            // sending otp
+                            Random rand = new Random();
+                            otpvalue = rand.nextInt(1255650);
 
-                        String to = email;// change accordingly
-                        // Get the session object
-                        Properties props = new Properties();
-                        props.put("mail.smtp.host", "smtp.gmail.com");
-                        props.put("mail.smtp.socketFactory.port", "465");
-                        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-                        props.put("mail.smtp.auth", "true");
-                        props.put("mail.smtp.port", "465");
-                        Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
-                            protected PasswordAuthentication getPasswordAuthentication() {
-                                return new PasswordAuthentication("vinhhpce181415@fpt.edu.vn", "yoyp aolq rnlc swkf");// Put your email
-                                // id and
-                                // password here
+                            String to = email;// change accordingly
+                            // Get the session object
+                            Properties props = new Properties();
+                            props.put("mail.smtp.host", "smtp.gmail.com");
+                            props.put("mail.smtp.socketFactory.port", "465");
+                            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+                            props.put("mail.smtp.auth", "true");
+                            props.put("mail.smtp.port", "465");
+                            Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+                                protected PasswordAuthentication getPasswordAuthentication() {
+                                    return new PasswordAuthentication("toanltce172023@fpt.edu.vn", "esme dkdo gdiw uxcq");// Put your email
+                                    // id and
+                                    // password here
+                                }
+                            });
+                            // compose message
+                            try {
+                                MimeMessage message = new MimeMessage(session);
+                                message.setFrom(new InternetAddress(email));// change accordingly
+                                message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+                                message.setSubject("Hello");
+                                message.setText("your OTP is: " + otpvalue);
+                                // send message
+                                Transport.send(message);
+                                System.out.println("message sent successfully");
+                            } catch (MessagingException e) {
+                                throw new RuntimeException(e);
                             }
-                        });
-                        // compose message
-                        try {
-                            MimeMessage message = new MimeMessage(session);
-                            message.setFrom(new InternetAddress(email));// change accordingly
-                            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-                            message.setSubject("Hello");
-                            message.setText("your OTP is: " + otpvalue);
-                            // send message
-                            Transport.send(message);
-                            System.out.println("message sent successfully");
-                        } catch (MessagingException e) {
-                            throw new RuntimeException(e);
+                            mySession.setAttribute("otp", otpvalue);
+                            mySession.setAttribute("email", email);
+                            mySession.setAttribute("username", username);
+                            request.setAttribute("message", "OTP is sent to your email id");
                         }
-                        mySession.setAttribute("otp", otpvalue);
-                        mySession.setAttribute("email", email);
-                        mySession.setAttribute("username", username);
-                        request.setAttribute("message", "OTP is sent to your email id");
-                    }
 
-                    //request.setAttribute("connection", con);
-                    response.sendRedirect("/FoodStoreManagement/CustomersController/EnterOTP");
+                        //request.setAttribute("connection", con);
+                        response.sendRedirect("/FoodStoreManagement/CustomersController/EnterOTP");
+                    }
+                } else {
+                    request.setAttribute("error", "Username is not exist");
+                    response.sendRedirect("/FoodStoreManagement/CustomersController/ForgotPassword");
+                    
                 }
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(CustomersController.class.getName()).log(Level.SEVERE, null, ex);
@@ -416,7 +421,6 @@ public class CustomersController extends HttpServlet {
             int value = Integer.parseInt(request.getParameter("otp"));
             HttpSession session = request.getSession();
             int otp = (int) session.getAttribute("otp");
-
 
             if (value == otp) {
 
@@ -448,49 +452,8 @@ public class CustomersController extends HttpServlet {
             }
 
         }
-
     }
 
-//    public void sendOTP2Email(String email) {
-//        int otpvalue = 0;
-//        HttpSession mySession = request.getSession();
-//        if (email != null || !email.equals("")) {
-//            // sending otp
-//            Random rand = new Random();
-//            otpvalue = rand.nextInt(1255650);
-//
-//            String to = email;// change accordingly
-//            // Get the session object
-//            Properties props = new Properties();
-//            props.put("mail.smtp.host", "smtp.gmail.com");
-//            props.put("mail.smtp.socketFactory.port", "465");
-//            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-//            props.put("mail.smtp.auth", "true");
-//            props.put("mail.smtp.port", "465");
-//            Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
-//                protected PasswordAuthentication getPasswordAuthentication() {
-//                    return new PasswordAuthentication("vinhhpce181415@fpt.edu.vn", "yoyp aolq rnlc swkf");// Put your email
-//                    // id and
-//                    // password here
-//                }
-//            });
-//            // compose message
-//            try {
-//                MimeMessage message = new MimeMessage(session);
-//                message.setFrom(new InternetAddress(email));// change accordingly
-//                message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-//                message.setSubject("Hello");
-//                message.setText("your OTP is: " + otpvalue);
-//                // send message
-//                Transport.send(message);
-//                System.out.println("message sent successfully");
-//            } catch (MessagingException e) {
-//                throw new RuntimeException(e);
-//            }
-//            mySession.setAttribute("otp", otpvalue);
-//        }
-//
-//    }
     /**
      * Returns a short description of the servlet.
      *
