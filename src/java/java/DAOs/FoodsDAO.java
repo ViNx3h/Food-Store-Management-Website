@@ -185,6 +185,22 @@ public class FoodsDAO {
         }
         return pro;
     }
+    
+    public int getFoodById(int pro_id) throws Exception {
+        int pro = 0;
+        try {
+            conn = DBcontext.DBConnection.connect();
+            PreparedStatement ps = conn.prepareStatement("Select * from Food Where idFood = ?");
+            ps.setInt(1, pro_id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                pro = rs.getInt("idFood");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(FoodsDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return pro;
+    }
 
     public ResultSet getAll(int type_id) throws Exception {
         ResultSet rs = null;
@@ -192,6 +208,47 @@ public class FoodsDAO {
             conn = DBcontext.DBConnection.connect();
             Statement st = conn.createStatement();
             rs = st.executeQuery("select * from Food where idFood = " + type_id);
+        } catch (SQLException ex) {
+            Logger.getLogger(FoodsDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return rs;
+    }
+    
+    public ResultSet getAllByCategory(int type_id) throws Exception {
+        ResultSet rs = null;
+        try {
+            conn = DBcontext.DBConnection.connect();
+            Statement st = conn.createStatement();
+            rs = st.executeQuery("select * from Food where id_category = " + type_id);
+        } catch (SQLException ex) {
+            Logger.getLogger(FoodsDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return rs;
+    }
+    
+    public int getCategoryById(int id){
+        int value = 0;
+                try {
+            PreparedStatement ps = conn.prepareStatement("Select * from Food where idFood = ?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                value = rs.getInt("id_category");
+            }
+        } catch (Exception e) {
+        }
+        return value;        
+    }
+    
+    
+
+    public ResultSet getAll() throws Exception {
+        ResultSet rs = null;
+        try {
+
+            conn = DBcontext.DBConnection.connect();
+            Statement st = conn.createStatement();
+            rs = st.executeQuery("select * from Food");
         } catch (SQLException ex) {
             Logger.getLogger(FoodsDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -211,19 +268,6 @@ public class FoodsDAO {
         return rs;
     }
 
-    public ResultSet getAll() throws Exception {
-        ResultSet rs = null;
-        try {
-
-            conn = DBcontext.DBConnection.connect();
-            Statement st = conn.createStatement();
-            rs = st.executeQuery("select * from Food");
-        } catch (SQLException ex) {
-            Logger.getLogger(FoodsDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return rs;
-    }
-
     public ResultSet getTop4(int type_id) throws Exception {
         ResultSet rs = null;
         try {
@@ -235,11 +279,111 @@ public class FoodsDAO {
         }
         return rs;
     }
-    
+
+    public List<Foods> adminSearchFoodbyName(String query) {
+        List<Foods> search = new ArrayList<>();
+        String sql = "select * from Food where name_food like '%" + query + "%'";
+        try {
+            conn = DBcontext.DBConnection.connect();
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Foods f1 = new Foods();
+                f1.setIdFood(rs.getInt("idFood"));
+                f1.setName_food(rs.getString("name_food"));
+                f1.setPrice(rs.getInt("price"));
+                f1.setQuantity(rs.getInt("quantity"));
+                f1.setPic(rs.getString("pic"));
+                f1.setDescription(rs.getString("description"));
+                f1.setStatus(rs.getBoolean("status"));
+                f1.setId_category(rs.getInt("id_category"));
+                search.add(f1);
+            }
+        } catch (Exception e) {
+        }
+        return search;
+    }
+
+    public List<Foods> adminSearchFoodbyCategory(String query) {
+        List<Foods> search = new ArrayList<>();
+        String sql = "select * from Food f join Category c \n"
+                + "ON f.id_category = c.id_category\n"
+                + "where c.name_category like '%" + query + "%'";
+        try {
+            conn = DBcontext.DBConnection.connect();
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Foods f1 = new Foods();
+                f1.setIdFood(rs.getInt("idFood"));
+                f1.setName_food(rs.getString("name_food"));
+                f1.setPrice(rs.getInt("price"));
+                f1.setQuantity(rs.getInt("quantity"));
+                f1.setPic(rs.getString("pic"));
+                f1.setDescription(rs.getString("description"));
+                f1.setStatus(rs.getBoolean("status"));
+                f1.setId_category(rs.getInt("id_category"));
+                search.add(f1);
+            }
+        } catch (Exception e) {
+        }
+        return search;
+    }
+
+    public List<Foods> employeeSearchFoodbyName(String query) {
+        List<Foods> search = new ArrayList<>();
+        String sql = "select * from Food where name_food like '%" + query + "%'";
+        try {
+            conn = DBcontext.DBConnection.connect();
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Foods f1 = new Foods();
+                f1.setIdFood(rs.getInt("idFood"));
+                f1.setName_food(rs.getString("name_food"));
+                f1.setPrice(rs.getInt("price"));
+                f1.setQuantity(rs.getInt("quantity"));
+                f1.setPic(rs.getString("pic"));
+                f1.setDescription(rs.getString("description"));
+                f1.setStatus(rs.getBoolean("status"));
+                f1.setId_category(rs.getInt("id_category"));
+                search.add(f1);
+            }
+        } catch (Exception e) {
+        }
+        return search;
+    }
+
+    public List<Foods> employeeSearchFoodbyCategory(String query) {
+        List<Foods> search = new ArrayList<>();
+        String sql = "select * from Food f join Category c \n"
+                + "ON f.id_category = c.id_category\n"
+                + "where c.name_category like '%" + query + "%'";
+        try {
+            conn = DBcontext.DBConnection.connect();
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Foods f1 = new Foods();
+                f1.setIdFood(rs.getInt("idFood"));
+                f1.setName_food(rs.getString("name_food"));
+                f1.setPrice(rs.getInt("price"));
+                f1.setQuantity(rs.getInt("quantity"));
+                f1.setPic(rs.getString("pic"));
+                f1.setDescription(rs.getString("description"));
+                f1.setStatus(rs.getBoolean("status"));
+                f1.setId_category(rs.getInt("id_category"));
+                search.add(f1);
+            }
+        } catch (Exception e) {
+        }
+        return search;
+    }
+
     public Foods updateQuantity(int pro_id, int newQuantity) {
         Foods pro = null;
         try {
-            PreparedStatement ps = conn.prepareStatement("Update Food Set quantity = ? Where id = ?");
+            PreparedStatement ps = conn.prepareStatement("Update Food Set quantity = ? Where idFood = ?");
             ps.setInt(1, newQuantity);
             ps.setInt(2, pro_id);
             ResultSet rs = ps.executeQuery();
@@ -254,6 +398,8 @@ public class FoodsDAO {
 
     public static void main(String[] args) {
         FoodsDAO dao = new FoodsDAO();
+        List<Foods> f = dao.employeeSearchFoodbyCategory("a");
+        System.out.println(f);
     }
 
 }
