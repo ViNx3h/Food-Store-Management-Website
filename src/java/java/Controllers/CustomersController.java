@@ -6,6 +6,7 @@ package Controllers;
 
 import DAOs.BillsDAO;
 import DAOs.CustomersDAO;
+import DAOs.FeedbacksDAO;
 import DAOs.FoodsDAO;
 import DAOs.OrdersDAO;
 import DAOs.ShoppingCartDAO;
@@ -13,6 +14,7 @@ import Models.Bills;
 import Models.Cart;
 import Models.Categories;
 import Models.Customers;
+import Models.Feedbacks;
 import Models.Foods;
 import Models.Orders;
 import java.io.IOException;
@@ -90,15 +92,15 @@ public class CustomersController extends HttpServlet {
             request.getRequestDispatcher("/ShoppingCart.jsp").forward(request, response);
         } else if (path.startsWith("/FoodStoreManagement/CustomersController/AddCart")) {
             Cookie[] cList = null;
-            cList = request.getCookies(); //Lay tat ca cookie cua website nay tren may nguoi dung
+            cList = request.getCookies();
             if (cList != null) {
                 boolean flagCustomer = false;
                 String value = null;
-                for (int i = 0; i < cList.length; i++) {//Duyet qua het tat ca cookie
-                    if (cList[i].getName().equals("customer")) {//nguoi dung da dang nhap
+                for (int i = 0; i < cList.length; i++) {
+                    if (cList[i].getName().equals("customer")) {
                         value = cList[i].getValue();
                         flagCustomer = true;
-                        break; //thoat khoi vong lap
+                        break;
                     }
                 }
                 if (flagCustomer == true) {
@@ -106,10 +108,10 @@ public class CustomersController extends HttpServlet {
                     try {
                         int pro_id = Integer.parseInt(s[s.length - 1]);
 
-                        for (Cookie cList1 : cList) { //Duyet qua het tat ca cookie
-                            if (cList1.getName().equals("customer")) { //nguoi dung da dang nhap
+                        for (Cookie cList1 : cList) {
+                            if (cList1.getName().equals("customer")) {
                                 value = cList1.getValue();
-                                break; //thoat khoi vong lap
+                                break;
                             }
                         }
                         ShoppingCartDAO scDAO = new ShoppingCartDAO();
@@ -139,7 +141,7 @@ public class CustomersController extends HttpServlet {
                         response.sendRedirect("/FoodStoreManagement" + type.getId_category());
                     }
                 } else {
-                    response.sendRedirect("/FoodStoreManagement");
+                    response.sendRedirect("/FoodStoreManagement/Login.jsp");
                 }
             }
         } else if (path.endsWith("/Home")) {
@@ -193,17 +195,19 @@ public class CustomersController extends HttpServlet {
             } catch (Exception e) {
                 response.sendRedirect("/FoodStoreManagement/CustomersController/ShoppingCart");
             }
-        } else if (path.endsWith("/FoodStoreManagement/CustomersController/ViewOrder")) {
+        } else if (path.endsWith("/FoodStoreManagement/CustomersController/ViewOrderHistory")) {
             request.getRequestDispatcher("/ViewOrder_Customer.jsp").forward(request, response);
+        } else if (path.endsWith("/FoodStoreManagement/CustomersController/Bill")) {
+            request.getRequestDispatcher("/ViewOrder_Bill.jsp").forward(request, response);
         } else if (path.endsWith("/FoodStoreManagement/CustomersController/ViewOrder_Process")) {
             try {
                 Cookie[] cList;
                 cList = request.getCookies();
                 String value = null;
-                for (Cookie cList1 : cList) { //Duyet qua het tat ca cookie
-                    if (cList1.getName().equals("customer")) { //nguoi dung da dang nhap
+                for (Cookie cList1 : cList) {
+                    if (cList1.getName().equals("customer")) {
                         value = cList1.getValue();
-                        break; //thoat khoi vong lap
+                        break;
                     }
                 }
                 ShoppingCartDAO scDAO = new ShoppingCartDAO();
@@ -236,7 +240,7 @@ public class CustomersController extends HttpServlet {
                         }
                     }
                     scDAO.delete(value);
-                    response.sendRedirect("/FoodStoreManagement/CustomersController/ViewOrder");
+                    response.sendRedirect("/FoodStoreManagement/CustomersController/Bill");
                 }
             } catch (Exception e) {
             }
@@ -246,6 +250,14 @@ public class CustomersController extends HttpServlet {
             request.getRequestDispatcher("/EnterOTP.jsp").forward(request, response);
         } else if (path.endsWith("/FoodStoreManagement/CustomersController/NewPassword")) {
             request.getRequestDispatcher("/NewPassword.jsp").forward(request, response);
+        } else if (path.endsWith("/FoodStoreManagement/CustomersController/FoodDetail")) {
+            request.getRequestDispatcher("/FoodDetail.jsp").forward(request, response);
+        } else if (path.startsWith("/FoodStoreManagement/CustomersController/FoodDetail_Process")) {
+            String[] s = path.split("/");
+            int pro_id = Integer.parseInt(s[s.length - 1]);
+            request.getSession().setAttribute("id", pro_id);
+            response.sendRedirect("/FoodStoreManagement/CustomersController/FoodDetail");
+
         }
     }
 
@@ -316,10 +328,10 @@ public class CustomersController extends HttpServlet {
                 Cookie[] cList;
                 cList = request.getCookies();
                 String value = null;
-                for (Cookie cList1 : cList) { //Duyet qua het tat ca cookie
-                    if (cList1.getName().equals("customer")) { //nguoi dung da dang nhap
+                for (Cookie cList1 : cList) {
+                    if (cList1.getName().equals("customer")) {
                         value = cList1.getValue();
-                        break; //thoat khoi vong lap
+                        break;
                     }
                 }
                 ShoppingCartDAO scDAO = new ShoppingCartDAO();
@@ -335,6 +347,8 @@ public class CustomersController extends HttpServlet {
                     response.sendRedirect("/FoodStoreManagement/CustomersController/ShoppingCart");
                 } else {
                     int bill_id = bDAO.getID();
+                    int idOrder = bDAO.getBillId(bill_id);
+                    request.getSession().setAttribute("id", idOrder);
                     FoodsDAO pDAO = new FoodsDAO();
                     OrdersDAO oDAO = new OrdersDAO();
                     ResultSet rs = scDAO.getAll(value);
@@ -349,7 +363,7 @@ public class CustomersController extends HttpServlet {
                         }
                     }
                     scDAO.delete(value);
-                    response.sendRedirect("/FoodStoreManagement/CustomersController/ViewOrder");
+                    response.sendRedirect("/FoodStoreManagement/CustomersController/Bill");
                 }
             } catch (Exception e) {
             }
@@ -359,60 +373,53 @@ public class CustomersController extends HttpServlet {
                 String email = request.getParameter("email");
                 CustomersDAO cDAO = new CustomersDAO();
                 String userMail = cDAO.getEmail(username);
-                boolean checkCus = cDAO.checkCus(username);
-                if (checkCus) {
-                    if (!(userMail.equalsIgnoreCase(email))) {
-                        request.getSession().setAttribute("checkEmail", "The email in the account doesn't match input email or the account doesn't exist");
-                        response.sendRedirect("/FoodStoreManagement/CustomersController/ForgotPassword");
-                    } else {
-                        int otpvalue = 0;
-                        HttpSession mySession = request.getSession();
-                        if (email != null || !email.equals("")) {
-                            // sending otp
-                            Random rand = new Random();
-                            otpvalue = rand.nextInt(1255650);
-
-                            String to = email;// change accordingly
-                            // Get the session object
-                            Properties props = new Properties();
-                            props.put("mail.smtp.host", "smtp.gmail.com");
-                            props.put("mail.smtp.socketFactory.port", "465");
-                            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-                            props.put("mail.smtp.auth", "true");
-                            props.put("mail.smtp.port", "465");
-                            Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
-                                protected PasswordAuthentication getPasswordAuthentication() {
-                                    return new PasswordAuthentication("toanltce172023@fpt.edu.vn", "esme dkdo gdiw uxcq");// Put your email
-                                    // id and
-                                    // password here
-                                }
-                            });
-                            // compose message
-                            try {
-                                MimeMessage message = new MimeMessage(session);
-                                message.setFrom(new InternetAddress(email));// change accordingly
-                                message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-                                message.setSubject("Hello");
-                                message.setText("your OTP is: " + otpvalue);
-                                // send message
-                                Transport.send(message);
-                                System.out.println("message sent successfully");
-                            } catch (MessagingException e) {
-                                throw new RuntimeException(e);
-                            }
-                            mySession.setAttribute("otp", otpvalue);
-                            mySession.setAttribute("email", email);
-                            mySession.setAttribute("username", username);
-                            request.setAttribute("message", "OTP is sent to your email id");
-                        }
-
-                        //request.setAttribute("connection", con);
-                        response.sendRedirect("/FoodStoreManagement/CustomersController/EnterOTP");
-                    }
-                } else {
-                    request.setAttribute("error", "Username is not exist");
+                if (!(userMail.equalsIgnoreCase(email))) {
+                    request.getSession().setAttribute("checkEmail", "The email in the account doesn't match input email or the account doesn't exist");
                     response.sendRedirect("/FoodStoreManagement/CustomersController/ForgotPassword");
-                    
+                } else {
+                    int otpvalue = 0;
+                    HttpSession mySession = request.getSession();
+                    if (email != null || !email.equals("")) {
+                        // sending otp
+                        Random rand = new Random();
+                        otpvalue = rand.nextInt(1255650);
+
+                        String to = email;// change accordingly
+                        // Get the session object
+                        Properties props = new Properties();
+                        props.put("mail.smtp.host", "smtp.gmail.com");
+                        props.put("mail.smtp.socketFactory.port", "465");
+                        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+                        props.put("mail.smtp.auth", "true");
+                        props.put("mail.smtp.port", "465");
+                        Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+                            protected PasswordAuthentication getPasswordAuthentication() {
+                                return new PasswordAuthentication("toanltce172023@fpt.edu.vn", "esme dkdo gdiw uxcq");// Put your email
+                                // id and
+                                // password here
+                            }
+                        });
+                        // compose message
+                        try {
+                            MimeMessage message = new MimeMessage(session);
+                            message.setFrom(new InternetAddress(email));// change accordingly
+                            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+                            message.setSubject("Hello");
+                            message.setText("Your OTP is: " + otpvalue);
+                            // send message
+                            Transport.send(message);
+                            System.out.println("message sent successfully");
+                        } catch (MessagingException e) {
+                            throw new RuntimeException(e);
+                        }
+                        mySession.setAttribute("otp", otpvalue);
+                        mySession.setAttribute("email", email);
+                        mySession.setAttribute("username", username);
+                        request.setAttribute("message", "OTP is sent to your email id");
+                    }
+
+                    //request.setAttribute("connection", con);
+                    response.sendRedirect("/FoodStoreManagement/CustomersController/EnterOTP");
                 }
             } catch (ClassNotFoundException ex) {
                 Logger.getLogger(CustomersController.class.getName()).log(Level.SEVERE, null, ex);
@@ -451,6 +458,38 @@ public class CustomersController extends HttpServlet {
                 }
             }
 
+        } else if (request.getParameter("btnFeedBack") != null) {
+            Cookie[] cList = null;
+            cList = request.getCookies();
+            if (cList != null) {
+                boolean flagCustomer = false;
+                String value = null;
+                for (int i = 0; i < cList.length; i++) {
+                    if (cList[i].getName().equals("customer")) {
+                        value = cList[i].getValue();
+                        flagCustomer = true;
+                        break;
+                    }
+                }
+                if (flagCustomer == true) {
+                    int idFood = Integer.parseInt(request.getParameter("productID"));
+                    String feedBack = request.getParameter("content");
+                    double rating = Double.parseDouble(request.getParameter("hdrating"));
+                    FeedbacksDAO fDAO = new FeedbacksDAO();
+                    long millis = System.currentTimeMillis();
+//                    Bills billNew = new Bills(value, date, total_quantity, note, address, phone);
+//                Bills bill = bDAO.addNew(billNew);
+                    // creating a new object of the class Date  
+                    Date date = new Date(millis);
+                    Feedbacks newFeedBack = new Feedbacks(value, idFood, date, feedBack, rating);
+                    Feedbacks fb = fDAO.addNew(newFeedBack);
+                    if(fb == null){
+                        response.sendRedirect("/FoodStoreManagement/CustomersController/FoodDetail");
+                    } else {
+                        response.sendRedirect("/FoodStoreManagement");
+                    }                  
+                }
+            }
         }
     }
 
