@@ -136,6 +136,18 @@ public class CategoriesDAO {
         }
         return rs;
     }
+    
+    public ResultSet getAll(int id) throws ClassNotFoundException {
+        ResultSet rs = null;
+        try {
+            conn = DBcontext.DBConnection.connect();
+            Statement st = conn.createStatement();
+            rs = st.executeQuery("select * from Category" + id);
+        } catch (SQLException ex) {
+            Logger.getLogger(CategoriesDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return rs;
+    }
 
     public ResultSet getAll_exist(int id) throws ClassNotFoundException {
         ResultSet rs = null;

@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,7 +21,10 @@ import java.util.logging.Logger;
  * @author VINH
  */
 public class OrdersDAO {
+
     Connection conn;
+    PreparedStatement ps;
+    ResultSet rs;
 
     public OrdersDAO() {
         try {
@@ -28,7 +33,7 @@ public class OrdersDAO {
             Logger.getLogger(OrdersDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public Orders addNew(Orders newOrder) {
         int count = 0;
         try {
@@ -43,7 +48,7 @@ public class OrdersDAO {
         }
         return (count == 0) ? null : newOrder;
     }
-    
+
     public ResultSet getOrder(int bill_id) {
         ResultSet rs = null;
         try {
@@ -55,4 +60,54 @@ public class OrdersDAO {
         }
         return rs;
     }
+
+    public int getTotalPrice(int idOrder) throws Exception {
+        int price = 0;
+        try {
+            conn = DBcontext.DBConnection.connect();
+            PreparedStatement ps = conn.prepareStatement("SELECT price, quantity FROM OrderFood WHERE idOrder=?");
+            ps.setInt(1, idOrder);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                price += rs.getInt("price") * rs.getInt("quantity");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CategoriesDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return price;
+    }
+
+    public int getAmount(int idFood) throws Exception {
+        int count = 0;
+        try {
+            conn = DBcontext.DBConnection.connect();
+            PreparedStatement ps = conn.prepareStatement("SELECT price, quantity FROM OrderFood WHERE idFood=?");
+            ps.setInt(1, idFood);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt("price") * rs.getInt("quantity");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CategoriesDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return count;
+    }
+
+    public List<Orders> getAllOrderFoods() {
+        List<Orders> list = new ArrayList<>();
+        String sql = "select * from OrderFood";
+        try {
+            conn = DBcontext.DBConnection.connect();
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+    
+    
+
 }
