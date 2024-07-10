@@ -257,8 +257,18 @@ public class CustomersController extends HttpServlet {
             int pro_id = Integer.parseInt(s[s.length - 1]);
             request.getSession().setAttribute("id", pro_id);
             response.sendRedirect("/FoodStoreManagement/CustomersController/FoodDetail");
-
+        } else if (path.endsWith("/FoodStoreManagement/CustomersController/Feedback")) {
+            request.getRequestDispatcher("/Feedback.jsp").forward(request, response);
+        } else if (path.startsWith("/FoodStoreManagement/CustomersController/FeedBack_Process")) {
+            String[] s = path.split("/");
+            int pro_id = Integer.parseInt(s[s.length - 1]);
+            request.getSession().setAttribute("id", pro_id);
+            response.sendRedirect("/FoodStoreManagement/CustomersController/Feedback");
         }
+        else if (path.endsWith("/FoodStoreManagement/CustomersController/Login")){
+            request.getRequestDispatcher("/Login.jsp").forward(request, response);
+        }
+
     }
 
     /**
@@ -275,50 +285,61 @@ public class CustomersController extends HttpServlet {
 //        processRequest(request, response);
         if (request.getParameter("btnSubmit") != null) {
 
-            CustomersDAO cDAO = new CustomersDAO();
-            String username = request.getParameter("username");
-            String password = request.getParameter("password");
-            String fullname = request.getParameter("fullname");
-            String birthday = request.getParameter("birthday");
-            String email = request.getParameter("email");
-            String phone = request.getParameter("phone");
-            String gender = request.getParameter("gender");
-            String address = request.getParameter("address");
-
-            if (username.isEmpty() || password.isEmpty() || fullname.isEmpty() || birthday.isEmpty() || email.isEmpty() || phone.isEmpty() || gender == null || address.isEmpty()) {
-                request.getSession().setAttribute("errorMessage", "Please fill in all the information!");
-                response.sendRedirect("/FoodStoreManagement/Login.jsp");
-                if (gender == null) {
-                    request.getSession().setAttribute("genderMessage", "Gender must not be empty!");
-                }
-                if (birthday.equals("")) {
-                    request.getSession().setAttribute("birthdayMessage", "Birthday must not be empty!");
-                    response.sendRedirect("/FoodStoreManagement/Login.jsp");
-                }
-            } else {
-                try {
-                    Customers checkCus = cDAO.getCustomer(username);
-                    if (checkCus != null) {
-                        request.getSession().setAttribute("checkMessage", "The account is already exist!");
+            try {
+                CustomersDAO cDAO = new CustomersDAO();
+                String username = request.getParameter("username");
+                String password = request.getParameter("password");
+                String fullname = request.getParameter("fullname");
+                String birthday = request.getParameter("birthday");
+                String email = request.getParameter("email");
+                String phone = request.getParameter("phone");
+                String gender = request.getParameter("gender");
+                String address = request.getParameter("address");
+                
+                boolean flag = cDAO.emailExists(email);
+                
+                if (username.isEmpty() || password.isEmpty() || fullname.isEmpty() || birthday.isEmpty() || email.isEmpty()
+                        || phone.isEmpty() || gender == null || address.isEmpty()) {
+                    request.getSession().setAttribute("errorMessage", "Please fill in all the information!");
+                    response.sendRedirect("/FoodStoreManagement/SignUp.jsp");
+                    if (gender == null) {
+                        request.getSession().setAttribute("genderMessage", "Gender must not be empty!");
+                    }
+                    if (birthday.equals("")) {
+                        request.getSession().setAttribute("birthdayMessage", "Birthday must not be empty!");
                         response.sendRedirect("/FoodStoreManagement/Login.jsp");
-                    } else {
-
-                        Date date = Date.valueOf(birthday);
-                        Boolean isMale = Boolean.valueOf(gender);
-                        String pass_md5 = cDAO.getPwdMd5(password);
-                        Customers newCus = new Customers(username, pass_md5, fullname, date, email, phone, isMale, address);
-                        Customers rs = cDAO.addNew(newCus);
-                        if (rs == null) {
-                            request.getSession().setAttribute("errorMessage", "Create Fail!");
+                    }
+                } else if (!flag) {
+                    request.getSession().setAttribute("errorEmail", "Email is exists!");
+                    response.sendRedirect("/FoodStoreManagement/SignUp.jsp");
+                    
+                } else {
+                    try {
+                        Customers checkCus = cDAO.getCustomer(username);
+                        if (checkCus != null) {
+                            request.getSession().setAttribute("checkMessage", "The account is already exist!");
                             response.sendRedirect("/FoodStoreManagement/Login.jsp");
                         } else {
-                            request.getSession().setAttribute("successMessage", "Create Successfully!");
-                            response.sendRedirect("/FoodStoreManagement/Login.jsp");
+                            
+                            Date date = Date.valueOf(birthday);
+                            Boolean isMale = Boolean.valueOf(gender);
+                            String pass_md5 = cDAO.getPwdMd5(password);
+                            Customers newCus = new Customers(username, pass_md5, fullname, date, email, phone, isMale, address);
+                            Customers rs = cDAO.addNew(newCus);
+                            if (rs == null) {
+                                request.getSession().setAttribute("errorMessage", "Create Fail!");
+                                response.sendRedirect("/FoodStoreManagement/Login.jsp");
+                            } else {
+                                request.getSession().setAttribute("successMessage", "Create Successfully!");
+                                response.sendRedirect("/FoodStoreManagement/Login.jsp");
+                            }
                         }
+                    } catch (ClassNotFoundException ex) {
+                        Logger.getLogger(CustomersController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(CustomersController.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(CustomersController.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else if (request.getParameter("btnCheckOut") != null) {
             String note = request.getParameter("noteTXT");
@@ -472,22 +493,32 @@ public class CustomersController extends HttpServlet {
                     }
                 }
                 if (flagCustomer == true) {
-                    int idFood = Integer.parseInt(request.getParameter("productID"));
-                    String feedBack = request.getParameter("content");
-                    double rating = Double.parseDouble(request.getParameter("hdrating"));
-                    FeedbacksDAO fDAO = new FeedbacksDAO();
-                    long millis = System.currentTimeMillis();
+                    try {
+                        int idFood = Integer.parseInt(request.getParameter("productID"));
+                        String feedBack = request.getParameter("content");
+                        double rating = Double.parseDouble(request.getParameter("hdrating"));
+                        FeedbacksDAO fDAO = new FeedbacksDAO();
+                        boolean isExist = fDAO.existFeedback(value, idFood);
+                        if (isExist) {
+                            fDAO.updateRating(rating, feedBack, value, idFood);
+                            response.sendRedirect("/FoodStoreManagement/CustomersController/FoodDetail");
+                        } else {
+                            long millis = System.currentTimeMillis();
 //                    Bills billNew = new Bills(value, date, total_quantity, note, address, phone);
 //                Bills bill = bDAO.addNew(billNew);
-                    // creating a new object of the class Date  
-                    Date date = new Date(millis);
-                    Feedbacks newFeedBack = new Feedbacks(value, idFood, date, feedBack, rating);
-                    Feedbacks fb = fDAO.addNew(newFeedBack);
-                    if(fb == null){
-                        response.sendRedirect("/FoodStoreManagement/CustomersController/FoodDetail");
-                    } else {
-                        response.sendRedirect("/FoodStoreManagement");
-                    }                  
+// creating a new object of the class Date
+                            Date date = new Date(millis);
+                            Feedbacks newFeedBack = new Feedbacks(value, idFood, date, feedBack, rating);
+                            Feedbacks fb = fDAO.addNew(newFeedBack);
+                            if (fb == null) {
+                                response.sendRedirect("/FoodStoreManagement/CustomersController/FoodDetail");
+                            } else {
+                                response.sendRedirect("/FoodStoreManagement");
+                            }
+                        }
+                    } catch (Exception ex) {
+                        Logger.getLogger(CustomersController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         }
