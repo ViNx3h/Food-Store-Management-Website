@@ -264,8 +264,7 @@ public class CustomersController extends HttpServlet {
             int pro_id = Integer.parseInt(s[s.length - 1]);
             request.getSession().setAttribute("id", pro_id);
             response.sendRedirect("/FoodStoreManagement/CustomersController/Feedback");
-        }
-        else if (path.endsWith("/FoodStoreManagement/CustomersController/Login")){
+        } else if (path.endsWith("/FoodStoreManagement/CustomersController/Login")) {
             request.getRequestDispatcher("/Login.jsp").forward(request, response);
         }
 
@@ -295,9 +294,10 @@ public class CustomersController extends HttpServlet {
                 String phone = request.getParameter("phone");
                 String gender = request.getParameter("gender");
                 String address = request.getParameter("address");
-                
+
                 boolean flag = cDAO.emailExists(email);
-                
+                boolean flagCus = cDAO.userExists(username);
+
                 if (username.isEmpty() || password.isEmpty() || fullname.isEmpty() || birthday.isEmpty() || email.isEmpty()
                         || phone.isEmpty() || gender == null || address.isEmpty()) {
                     request.getSession().setAttribute("errorMessage", "Please fill in all the information!");
@@ -309,10 +309,18 @@ public class CustomersController extends HttpServlet {
                         request.getSession().setAttribute("birthdayMessage", "Birthday must not be empty!");
                         response.sendRedirect("/FoodStoreManagement/Login.jsp");
                     }
-                } else if (!flag) {
-                    request.getSession().setAttribute("errorEmail", "Email is exists!");
+                } else if (!flag && !flagCus) {
+                    request.getSession().setAttribute("errorEmail", "Email is already exists!");
+                    request.getSession().setAttribute("errorUsername", "Username is already exists!");
                     response.sendRedirect("/FoodStoreManagement/SignUp.jsp");
-                    
+
+                } else if (!flagCus) {
+                    request.getSession().setAttribute("errorUsername", "Username is already exists!");
+                    response.sendRedirect("/FoodStoreManagement/SignUp.jsp");
+                } else if (!flag) {
+                    request.getSession().setAttribute("errorEmail", "Email is already exists!");
+                    response.sendRedirect("/FoodStoreManagement/SignUp.jsp");
+
                 } else {
                     try {
                         Customers checkCus = cDAO.getCustomer(username);
@@ -320,7 +328,7 @@ public class CustomersController extends HttpServlet {
                             request.getSession().setAttribute("checkMessage", "The account is already exist!");
                             response.sendRedirect("/FoodStoreManagement/Login.jsp");
                         } else {
-                            
+
                             Date date = Date.valueOf(birthday);
                             Boolean isMale = Boolean.valueOf(gender);
                             String pass_md5 = cDAO.getPwdMd5(password);
@@ -513,7 +521,7 @@ public class CustomersController extends HttpServlet {
                             if (fb == null) {
                                 response.sendRedirect("/FoodStoreManagement/CustomersController/FoodDetail");
                             } else {
-                                response.sendRedirect("/FoodStoreManagement");
+                                response.sendRedirect("/FoodStoreManagement/CustomersController/FoodDetail");
                             }
                         }
                     } catch (Exception ex) {
