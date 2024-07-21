@@ -1,23 +1,25 @@
 <%-- 
-    Document   : DashBoardAdmin
-    Created on : Jun 5, 2024, 4:36:42 PM
+    Document   : AdminSearchFoodbyName
+    Created on : Jun 13, 2024, 11:14:08 PM
     Author     : ADMIN
 --%>
 
 <%@page import="Models.Categories"%>
+<%@page import="Models.Foods"%>
+<%@page import="Models.Foods"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.List"%>
+<%@page import="DAOs.CategoriesDAO"%>
+<%@page import="DAOs.FoodsDAO"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page import="Models.Foods"%>
-<%@page import="DAOs.FoodsDAO"%>
-<%@page import="java.util.List"%>
-<%@ page import="java.sql.ResultSet" %>
-<%@ page import="DAOs.CategoriesDAO" %>
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8">
-        <title>Admin Dashboard</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link rel="stylesheet" href="css/dashBoardAdmin.css">
         <style>
@@ -29,13 +31,16 @@
     </head>
     <body>
         <%
-            Cookie[] cList = request.getCookies();
+            Cookie[] cList = null;
+            cList = request.getCookies();
             boolean flagCustomer = false;
             if (cList != null) {
-                for (Cookie cookie : cList) { 
-                    if (cookie.getName().equals("admin")) { 
+                String value = "";
+                for (int i = 0; i < cList.length; i++) {
+                    if (cList[i].getName().equals("admin")) {
+                        value = cList[i].getValue();
                         flagCustomer = true;
-                        break;  
+                        break;
                     }
                 }
                 if (flagCustomer) {
@@ -98,33 +103,33 @@
                         </ul>
                     </div>
                 </nav>
-
                 <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
-                    <div class="search-container p-3 border rounded shadow-sm mb-4">
-                        <h4 class="text-center">Search Foods</h4>
-                        <form action="AdminSearchFood" class="form-inline" method="get">
-                            <div class="input-group w-100">
-                                <select id="search-option" name="option" class="form-select form-select-sm">
-                                    <option value="name">By Name</option>
-                                    <option value="category">By Category</option>
-                                </select>
-                                <input type="text" class="form-control form-control-sm" id="searchQuery" name="query" placeholder="Search Foods...">
-                                <button class="btn btn-danger btn-sm" type="submit">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </form>
+                    <div class="container mt-5">
+                        <div class="search-container p-3 border rounded shadow-sm">
+                            <h4 class="text-center">Search Foods</h4>
+                            <form action="AdminSearchFood" class="form-inline" method="doGet">
+                                <div class="input-group w-100">
+                                    <select id="search-option" name="option" class="form-control form-control-sm">
+                                        <option value="name">By Name</option>
+                                        <option value="category">By Category</option>
+                                    </select>
+                                    <input type="text" class="form-control form-control-sm" id="searchQuery" name="query" placeholder="Search Foods...">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-danger btn-sm" type="submit">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-
                     <h3>Product List</h3>
                     <div class="row">
                         <%
-                            FoodsDAO dao = new FoodsDAO();
-                            CategoriesDAO categoriesDao = new CategoriesDAO();
-                            List<Foods> list = dao.getAllFoods();
-
+                            List<Foods> list = (List<Foods>) request.getAttribute("list");
+                            CategoriesDAO ca = new CategoriesDAO();
                             for (Foods food : list) {
-                                Categories category = categoriesDao.findCategory(food.getId_category());
+                                Categories category = ca.findCategory(food.getId_category());
                                 if (category != null) {
                                     food.setCategoryName(category.getName_category());
                                 }
@@ -154,18 +159,20 @@
                 </main>
             </div>
         </div>
-        <%
-                } else {
-                        response.sendRedirect("/FoodStoreManagement");
-                    }
-            }
-        %>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js"></script>
         <script>
-                                                function confirmDeleteProduct(id) {
-                                                    return confirm("Are you sure you want to delete this Food with ID = " + id + "?");
-                                                }
+            function confirmDeleteProduct(id) {
+                if (confirm("Are you sure you want to delete this Food with ID = " + id + "?")) {
+                    window.location = "DeleteFood?idFood=" + id;
+                    return true;
+                }
+                return false;
+            }
         </script>
+        <%}
+        } else {
+
+        %>
+        <a href="Login.jsp"><h1>Login Before</h1></a>
+        <%  }%>
     </body>
 </html>

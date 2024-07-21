@@ -25,9 +25,20 @@
 
                         <h2>Register Account</h2>
 
+                        <%
+                        String errorEmail = (String) session.getAttribute("errorEmail");
+                        if (errorEmail != null) {
+                        %>
+                        <div style="color: red;">
+                            <%= errorEmail %>
+                        </div>
+                        <%
+                                session.removeAttribute("errorEmail"); // Remove the attribute to avoid showing the error again
+                            }
+                        %>
                         <form action="CustomersController" method="post">
                             <div class="form-group">
-                                <label>UserName</label>
+                                <label>UserName:</label>
                                 <input type="text" id="username" name="username" class="form-control" placeholder="Enter userName" required>
                             </div>
                             <div class="form-group">
@@ -35,24 +46,27 @@
                                 <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
                             </div>
                             <div class="form-group">
-                                <label>FullName</label>
-                                <input type="text" id="fullname" name="fullname" class="form-control" placeholder="Enter fullname" required>                         
+                                <label>Full Name:</label>
+                                <input type="text" id="fullName" name="fullname" class="form-control" placeholder="Enter fullname" required>
+                                <div id="fullNameError" class="text-danger"></div>
                             </div>
                             <div class="form-group">
-                                <label>Birthday</label>
-                                <input type="date" id="birthday" name="birthday" class="form-control" required>                         
+                                <label>Birthday:</label>
+                                <input type="date" id="birthday" name="birthday" class="form-control" required>
+                                <div id="birthdayError" class="text-danger"></div>
                             </div>
                             <div class="form-group">
-                                <label for="email-for-pass">Enter your email address</label> 
-                                <input class="form-control" type="text" name="email" id="email-for-pass" required="">
-                                <small class="form-text text-muted">Enter the registered email address. Then we'll email an OTP to this address.</small>
+                                <label for="email-for-pass">Enter your email address:</label> 
+                                <input class="form-control" type="email" name="email" id="email-for-pass" required="">
+                                <div id="emailError" class="text-danger"></div>
                             </div>
                             <div class="form-group">
-                                <label>Phone</label>
-                                <input type="text" id="phone" name="phone" class="form-control" placeholder="Enter your phone number" required>
+                                <label>Phone:</label>
+                                <input type="phone" id="phone"  minlength="10" maxlength="11" name="phone" class="form-control" placeholder="Enter your phone number" required>
+                                <div id="phoneError" class="text-danger"></div>
                             </div>
                             <div class="form-group mb-0">
-                                <label>Gender</label>
+                                <label>Gender:</label>
                                 <div>
                                     <label>
                                         <input type="radio" name="gender" value="true" id="male" required>
@@ -77,5 +91,9 @@
                 </div>
             </div>
         </div>
+        <script src="javascript/UpdateProfile.js"></script>
+        <!-- Bootstrap Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js"></script>
     </body>
 </html>

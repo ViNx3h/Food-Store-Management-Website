@@ -17,60 +17,70 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Home Page</title>
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <!-- Custom CSS -->
-        <link rel="stylesheet" href="css/homepage.css">
+        <link rel="stylesheet" href="css/index.css">
+        <style>
+            .category-link {
+                display: flex;
+                justify-content: center;
+                text-decoration: none;
+            }
+            .category-title {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .category-icon {
+                font-size: 2rem;
+                margin-right: 10px;
+            }
+            .category-name {
+                font-size: 2rem;
+                font-style: italic;
+            }
+        </style>
     </head>
-
-    <html>
-        <head>
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-            <title>JSP Page</title>
-            <!-- Bootstrap CSS -->
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-            <!-- Font Awesome -->
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-            <!-- Custom CSS -->
-            <link rel="stylesheet" href="css/homepage.css">
-        </head>
-
+    <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-white">
             <div class="container">
-                <a class="navbar-brand" href="/FoodStoreManagement"><img src="image/logo.png" alt="Logo"></a>
-
+                <a class="navbar-brand" href="/FoodStoreManagement">
+                    <img src="images/logo.png" alt="Logo">
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav">
                         <li class="nav-item">
                             <form action="Search.jsp" class="form-inline">
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="searchQuery" name="search" placeholder="Search food">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-danger" type="submit">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
+                                    <button class="btn btn-danger" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
                                 </div>
                             </form>
                         </li>
+
                         <%
                             Cookie[] cList = null;
-                            cList = request.getCookies();
+                            cList = request.getCookies();  
                             boolean flagCustomer = false;
                             if (cList != null) {
                                 String value = "";
-                                for (int i = 0; i < cList.length; i++) {
-                                    if (cList[i].getName().equals("customer")) {
+                                for (int i = 0; i < cList.length; i++) { 
+                                    if (cList[i].getName().equals("customer")) { 
                                         value = cList[i].getValue();
                                         flagCustomer = true;
-                                        break;
+                                        break;  
                                     }
                                 }
                                 if (flagCustomer) {
@@ -142,7 +152,7 @@
                             </p>
                         </div>
                         <div class="main_image">
-                            <img src="image/main_img.png" class="d-block w-100" alt="Fresh Food">
+                            <img src="images/main_img.png" class="d-block w-100" alt="Fresh Food">
                         </div>
                     </div>
                 </div>
@@ -161,7 +171,7 @@
                             </p>
                         </div>
                         <div class="main_image">
-                            <img src="image/Hot_dog.jpg" class="d-block w-100" alt="Fresh Food">
+                            <img src="images/Hot_dog.jpg" class="d-block w-100" alt="Fresh Food">
                         </div>
                     </div>
                 </div>
@@ -178,38 +188,74 @@
             </button>
         </div>
     </div>
+    <!-- Danh sách các danh mục -->
+    <div class="container mt-5">
+        <h2 class="text-center">Categories</h2>
+        <div class="row">
+
+            <% CategoriesDAO cDAO = new CategoriesDAO();
+               ResultSet categories = cDAO.getAll();
+               while (categories.next()) { %>
+            <div class="col-md-3">
+                <div class="card mb-4">
+                    <img src="<%= categories.getString("img_category") %>" class="card-img-top" alt="Category Image">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <h5 class="card-title text-center mb-3"><%= categories.getString("name_category") %></h5>
+                        <a href="/FoodStoreManagement/Foods.jsp?id=<%= categories.getInt("id_category") %>" class="btn btn-outline-warning">View Foods</a>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+
+        </div>
+    </div>
+
+
+
     <main>
         <div class="container mt-5">
             <hr>
-            <% CategoriesDAO cDAO = new CategoriesDAO();
-                FoodsDAO pDAO = new FoodsDAO();
-                ResultSet rs = cDAO.getAll();
-                while (rs.next()) {
-                    ResultSet rs2 = pDAO.getTop4(rs.getInt("id_category"));%>
-            <a href="/FoodStoreManagement/Foods.jsp?id=<%= rs.getInt("id_category")%>"><h1 class="text-center"><%= rs.getString("name_category")%></h1></a>
-            <div class="row" id="card-wool">
-                <% while (rs2.next()) {%>
-                <div class="col-sm-6 col-md-3">
-                    <div class="card p-1">
-                        <a href="/FoodStoreManagement/CustomersController/FoodDetail_Process/<%= pDAO.getFoodById(rs2.getInt("idFood"))%>" > <img class="card-img-top" src="<%= rs2.getString("pic")%>" alt="Card image"> </a>
-                        <div class="card-body text-center">
-                            <h4 class="card-title"><%= rs2.getString("name_food")%></h4>
-                            <div class="card-text">
-                                <small class="mt-3"><em><%= rs2.getString("description")%></em></small><br/>
-                                <small>Quantity: <%= rs2.getInt("quantity")%></small>
-                                <h5><strong><%= rs2.getInt("price")%>VND</strong></h5>
-                            </div>
-                            <a href="CustomersController/AddCart/<%= rs2.getInt("idFood")%>" class="btn btn-primary btn-sm">Add Cart</a>
-                        </div>
+            <% 
+            FoodsDAO pDAO = new FoodsDAO(); 
+            ResultSet rs = cDAO.getAll(); 
+            while (rs.next())
+        { ResultSet rs2 = pDAO.getTop4(rs.getInt("id_category")); 
+        if(pDAO.foodExists(rs.getInt("id_category"))){
+            %>
+            <div class="container mt-5">
+                <a href="/FoodStoreManagement/Foods.jsp?id=<%= rs.getInt("id_category") %>">
+                    <div class="category-title">
+                        <i class="fa-solid fa-bowl-food"></i>
+                        <h1 class="category-name"><%= rs.getString("name_category") %></h1>
                     </div>
+                </a>
+                <div class="row">
+                    <% while (rs2.next()) { %>
+                    <div class="col-md-3">
+                        <div class="card mb-4">
+                            <a href="/FoodStoreManagement/CustomersController/FoodDetail_Process/<%= pDAO.getFoodById(rs2.getInt("idFood")) %>">
+                                <img class="card-img-top" src="<%= rs2.getString("pic") %>" alt="Food Image">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title"><%= rs2.getString("name_food") %></h5>
+                                <p class="card-text">
+                                    <small><%= rs2.getString("description") %></small><br/>
+                                    <small>Quantity: <%= rs2.getInt("quantity") %></small>
+                                </p>
+                                <p class="card-text"><strong><%= rs2.getInt("price") %> VND</strong></p>
+                                <a href="CustomersController/AddCart/<%= rs2.getInt("idFood") %>" class="btn btn-outline-warning">Add to Cart</a>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <% }} %>
                 </div>
-                <% } %>
+
             </div>
-            <hr>
-            <% }%>
+            <% } %>
         </div>
-    </main>  
-    <footer class="bg-primary text-white py-3">
+    </main>
+    <footer class="bg-info text-white py-3">
         <div class="container">
             <div class="row">
                 <div class="col-md-8">
@@ -218,16 +264,14 @@
                     <p>Email: ToanLTCE172023@fpt.edu.vn</p>
                     <p>Phone: 0949415422</p>
                 </div>
-                <div class="col-md-4">
-                    <p class="text-center m-0">&copy; 2024 Food Store.</p>
+                <div class="col-md-4 text-center">
+                    <p>&copy; 2024 Food Store.</p>
                 </div>
             </div>
         </div>
     </footer>
-    <script src="
-            https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
-    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById("user-icon").addEventListener("click", function (event) {
             event.preventDefault();
@@ -251,10 +295,7 @@
                 }
             }
         }
-
     </script>
-    <!-- Bootstrap JavaScript và các phụ thuộc -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
+
