@@ -23,89 +23,120 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-        <!-- Bootstrap CSS -->
+        <title>Order History</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-        <!-- Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <style>
+            body {
+                background-color: #f8f9fa;
+                font-family: 'Arial', sans-serif;
+            }
+            .container {
+                margin-top: 50px;
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            }
+            .btn-back {
+                background-color: #007bff;
+                color: white;
+            }
+            .btn-back:hover {
+                background-color: #0056b3;
+                color: white;
+            }
+            .table th, .table td {
+                vertical-align: middle;
+            }
+            .table thead {
+                background-color: #007bff;
+                color: white;
+            }
+            .table tfoot {
+                background-color: #f8f9fa;
+            }
+            .form-label {
+                margin-bottom: 0.5rem;
+            }
+        </style>
     </head>
     <body>
         <%
-            Cookie[] cList = null;
-            cList = request.getCookies(); //Lay tat ca cookie cua website nay tren may nguoi dung
+            Cookie[] cList = request.getCookies(); // Lay tat ca cookie cua website nay tren may nguoi dung
             boolean flagAdmin = false;
             if (cList != null) {
                 String value = "";
-                for (int i = 0; i < cList.length; i++) {//Duyet qua het tat ca cookie
-                    if (cList[i].getName().equals("admin")) {//nguoi dung da dang nhap
+                for (int i = 0; i < cList.length; i++) { // Duyet qua het tat ca cookie
+                    if (cList[i].getName().equals("admin")) { // Nguoi dung da dang nhap
                         value = cList[i].getValue();
                         flagAdmin = true;
-                        break; //thoat khoi vong lap
+                        break; // Thoat khoi vong lap
                     }
                 }
                 if (flagAdmin) {
         %>
-        <div class="container border border-3 border-success p-2 mb-5 bg-white">
-            <h1>Order History</h1>
-            <table class="table table-striped">
+        <%
+            CustomersDAO cDAO = new CustomersDAO();
+            String user = (String) session.getAttribute("user");
+        %>
+        <div class="container p-4 mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Order History</h1>
+                <a class="btn btn-outline-secondary" href="/FoodStoreManagement/Customers.jsp"><i class="fas fa-arrow-left"></i> Back</a>
+            </div>
+            <h2 class="text-center pb-4">Bill of <%= cDAO.getfullName(user) %></h2>
+            <%
+                BillsDAO bDAO = new BillsDAO();
+                OrdersDAO oDAO = new OrdersDAO();
+                FoodsDAO pDAO = new FoodsDAO();
+                ResultSet rsBill = bDAO.getBill(user);
+                while (rsBill.next()) {
+            %>
+            <div class="mb-4 p-4 border rounded">
+                <div class="d-flex justify-content-between">
+                    <p><strong>Bill: <%= rsBill.getInt("idOrder") %></strong></p>
+                    <p class="mb-0"><em><%= rsBill.getDate("orderDate") %></em></p>
+                </div>
+                <hr>
                 <%
-                    OrdersDAO odao = new OrdersDAO();
-                    List<Orders> list = odao.getAllOrderFoods();
-                        BillsDAO bDAO = new BillsDAO();
-                        OrdersDAO oDAO = new OrdersDAO();
-                        FoodsDAO pDAO = new FoodsDAO();
-                        String user = (String) session.getAttribute("user");
-                        ResultSet rsBill = bDAO.getBill(user);
-                        while (rsBill.next()) {
+                    ResultSet rsOrder = oDAO.getOrder(rsBill.getInt("idOrder"));
+                    while (rsOrder.next()) {
+                        Foods pro = pDAO.getProduct(rsOrder.getInt("idFood"));
                 %>
-                <thead>
-                    <tr>
-                        <th>Order Date</th>
-                        <th>Bill</th>
-                        <th>Name Food</th>
-                        <th>Customer</th>
-                        <th>Quantity</th>
-                        <th>Note</th>
-                        <th>Address</th>
-                        <th>Phone</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    <tr>       
-                        <td><%= rsBill.getDate("orderDate")%></td>
-                        <td><%= rsBill.getInt("idOrder")%></td>
-                        <%
-                            ResultSet rsOrder = oDAO.getOrder(rsBill.getInt("idOrder"));
-                            while (rsOrder.next()) {
-                                Foods pro = pDAO.getProduct(rsOrder.getInt("idFood"));
-                        %>
-                        <td><%= pro.getName_food()%></td>
-                        <td><%= rsBill.getString("userCus")%></td>
-                        <td><%= rsBill.getInt("total_quantity")%></td>
-                        <td><%= rsBill.getString("note")%></td>
-                        <td><%= rsBill.getString("address")%></td>
-                        <td><%= rsBill.getString("phone")%></td>
-                        <td><%= oDAO.getTotalPrice(rsBill.getInt("idOrder"))%></td>
-                        <%
-                            }
-                        %>
-
-                    </tr>
-                    <%
-                        }
-                    %>
-                </tbody>
-            </table>
-            <a href="/FoodStoreManagement/AdminController/ListCustomer">Back</a>
+                <div class="row mb-3">
+                    <div class="col-lg-6">
+                        <h5><%= pDAO.getNameFoodById(rsOrder.getInt("idFood")) %> x<%= rsOrder.getInt("quantity") %></h5>
+                        <p><%= oDAO.getPrice(rsOrder.getInt("idFood"), rsBill.getInt("idOrder")) %> VND</p>
+                    </div>
+                    <div class="col-lg-6 text-end">
+                        <p><strong><%= oDAO.getAmount(rsOrder.getInt("idFood"), rsBill.getInt("idOrder")) %> VND</strong></p>
+                        <p><strong>Status: <%= rsBill.getString("Confirm") %></strong></p>
+                    </div>
+                </div>
+                <hr>
+                <%
+                    }
+                %>
+                <div class="mb-3">
+                    <p class="form-label"><strong>Note:</strong> <%= bDAO.getNote(rsBill.getInt("idOrder")) %></p>
+                    <p class="form-label"><strong>Address:</strong> <%= bDAO.getAddress(rsBill.getInt("idOrder")) %></p>
+                    <p class="form-label"><strong>Phone:</strong> <%= bDAO.getPhone(rsBill.getInt("idOrder")) %></p>
+                </div>
+                <p class="text-end" style="color: #dc3545; font-size: x-large"><strong>Total: <%= oDAO.getTotalPrice(rsBill.getInt("idOrder")) %> VND</strong></p>
+            </div>
+            <%
+                }
+            %>
         </div>
-        <%} else {%>     
-        <a href="Login.jsp"><h1>Login Before</h1></a>
-        <%}
-            }%> 
+        <% } else { %>
+        <div class="container text-center">
+            <a href="Login.jsp"><h1>Login Before</h1></a>
+        </div>
+        <% } %>
+        <% } %>
         <!-- Bootstrap Bundle with Popper -->
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js"></script>
     </body>
 </html>
+

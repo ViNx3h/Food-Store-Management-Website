@@ -1,9 +1,3 @@
-<%-- 
-    Document   : Forgotpassword
-    Created on : Jun 19, 2024, 1:14:02 PM
-    Author     : ADMIN
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -77,6 +71,14 @@
                     </div>
                     <form class="card mt-4" action="CustomersController" method="POST">
                         <div class="card-body">
+                            <div class="form-group mb-3">
+                                <label for="role" class="col-sm-3 col-form-label">Role: </label>
+                                <select name="role" id="role" class="form-control">
+                                    <option value="customer">Customer</option>
+                                    <option value="employee">Employee</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
                             <div>
                                 Username: <input type="text" name="username" placeholder="input your username">
                             </div>
@@ -87,21 +89,11 @@
                                     class="form-text text-muted">Enter the registered email address . Then we'll
                                     email a OTP to this address.</small>
                             </div>
-
-                            <%
-                            String error = (String) request.getAttribute("error");
-                            if (error != null) {
-                            %>
-                            <div class="text-danger">
-                                <%= error %>
-                            </div>
-                            <%}%>
-
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary" name="btnGetOTP">Get OTP</button>
-                            <a href="/FoodStoreManagement/Login.jsp" class="btn btn-danger">Back to
-                                Login</a>
+                            <button class="btn btn-danger" type="submit">Back to
+                                Login</button>
                         </div>
                     </form>
                 </div>
