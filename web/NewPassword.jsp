@@ -1,7 +1,7 @@
 <%-- 
     Document   : NewPassword
-    Created on : Jun 17, 2024, 10:33:28 PM
-    Author     : VINH
+    Created on : Jun 19, 2024, 1:13:10 PM
+    Author     : ADMIN
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -10,7 +10,7 @@
     <head>
         <meta charset='utf-8'>
         <meta name='viewport' content='width=device-width, initial-scale=1'>
-        <title>Snippet - BBBootstrap</title>
+        <title>New Password</title>
         <link
             href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css'
             rel='stylesheet'>
@@ -51,13 +51,15 @@
                                     <!-- User Name Input -->
                                     <div class="form-group row justify-content-center px-3">
                                         <div class="col-9 px-0">
-                                            <input type="text" name="password" placeholder="&#xf084; &nbsp; New Password"
+                                            <p>Confirm new password:</p>           
+                                            <input type="password" name="password" placeholder="&#xf084; &nbsp; New Password"
                                                    class="form-control border-info placeicon">
                                         </div>
                                     </div>
                                     <!-- Password Input -->
                                     <div class="form-group row justify-content-center px-3">
                                         <div class="col-9 px-0">
+                                            <p>Confirm new password:</p>
                                             <input type="password" name="confPassword"
                                                    placeholder="&#xf084; &nbsp; Confirm New Password"
                                                    class="form-control border-info placeicon">
@@ -83,8 +85,7 @@
                                 <div class="pt-2">
                                     <div class="row justify-content-center">
                                         <h5>
-                                            Don't have an Account?<span><a href="#"
-                                                                           class="text-danger"> Register Now!</a></span>
+                                            <span class="text-primary">Already have an account? <a class="text-danger"href="/FoodStoreManagement/Login.jsp">Log in</a></span>
                                         </h5>
                                     </div>
                                     <div
