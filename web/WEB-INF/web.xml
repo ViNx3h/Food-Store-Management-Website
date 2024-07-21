@@ -4,9 +4,25 @@
         <servlet-name>CustomersController</servlet-name>
         <servlet-class>Controllers.CustomersController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminController</servlet-name>
+        <servlet-class>Controllers.AdminController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EmployeesController</servlet-name>
+        <servlet-class>Controllers.EmployeesController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>CustomersController</servlet-name>
         <url-pattern>/CustomersController/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminController</servlet-name>
+        <url-pattern>/AdminController/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmployeesController</servlet-name>
+        <url-pattern>/EmployeesController/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
